@@ -4,6 +4,7 @@ import 'package:salesboardapp/pages/farmer_screen.dart';
 import 'package:salesboardapp/pages/orders_screen.dart';
 import 'package:salesboardapp/pages/profile_screen.dart';
 import 'package:salesboardapp/pages/mark_attendance.dart';
+import 'package:salesboardapp/pages/view_leave_screen.dart';
 import 'package:salesboardapp/pages/visits_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -79,10 +80,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   const Text("Customer")
                                 ],
                               ),
-                              onTap: (){
+                              onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => FarmerScreen()),
+                                  MaterialPageRoute(
+                                      builder: (context) => FarmerScreen()),
                                 );
                               },
                             ),
@@ -103,7 +105,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => VisitsScreen()),
+                                  MaterialPageRoute(
+                                      builder: (context) => VisitsScreen()),
                                 );
                               },
                             ),
@@ -127,11 +130,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => OrdersScreen()),
+                                  MaterialPageRoute(
+                                      builder: (context) => OrdersScreen()),
                                 );
                               },
                             ),
-
                           )
                         ],
                       ),
@@ -191,7 +194,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => AttendanceScreen()),
+                                  MaterialPageRoute(
+                                      builder: (context) => AttendanceScreen()),
                                 );
                               },
                             ),
@@ -227,15 +231,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           SizedBox(
                             width: 80,
-                            child: Column(
-                              children: [
-                                Image.asset("assets/icon_menu4.png",
-                                    width: 40, height: 40),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text("Leaves")
-                              ],
+                            child: InkWell(
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/icon_menu4.png",
+                                      width: 40, height: 40),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  const Text("Leaves")
+                                ],
+                              ),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ViewLeaveScreen())),
                             ),
                           ),
                           SizedBox(
