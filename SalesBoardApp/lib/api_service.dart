@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:salesboardapp/api_constants.dart';
 import 'package:salesboardapp/models/Attendance.dart';
 import 'package:salesboardapp/models/Customer.dart';
+import 'package:salesboardapp/models/TourItem.dart';
+import 'package:salesboardapp/models/tour_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/Area.dart';
@@ -309,5 +312,68 @@ class ApiService {
     } else {
       print('Failed to upload image. Status code: ${response.statusCode}');
     }
+  }
+
+  Future<List<TourResponse>> fetchTourPlans() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+    final event = prefs.getString('type');
+
+    print(userId);
+    print(event);
+
+    final body = {
+      'user_id': userId,
+      'event': event,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.viewTourPlanEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> jsonData = jsonResponse['result'];
+      return jsonData.map((visit) => TourResponse.fromJson(visit)).toList();
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
+      return [];
+    }
+
+  }
+
+  Future<List<TourItem>> fetchTours(String tpId, String mId, String uId) async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
+    print(uId);
+    print(tpId);
+    print(mId);
+
+    final body = {
+      'user_id': userId,
+      'tp_id': tpId,
+      'month': mId,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.tourPlanInDetailsEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> jsonData = jsonResponse['result'];
+      return jsonData.map((visit) => TourItem.fromJson(visit)).toList();
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
+      return [];
+    }
+
   }
 }

@@ -4,6 +4,7 @@ import 'package:salesboardapp/pages/farmer_screen.dart';
 import 'package:salesboardapp/pages/orders_screen.dart';
 import 'package:salesboardapp/pages/profile_screen.dart';
 import 'package:salesboardapp/pages/mark_attendance.dart';
+import 'package:salesboardapp/pages/view_tour_plan.dart';
 import 'package:salesboardapp/pages/visits_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -164,15 +165,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           SizedBox(
                             width: 80,
-                            child: Column(
-                              children: [
-                                Image.asset("assets/icon_report.png",
-                                    width: 40, height: 40),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text("Reports")
-                              ],
+                            child: InkWell(
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/icon_report.png",
+                                      width: 40, height: 40),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  const Text("Reports")
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ViewTourPlan()),
+                                );
+                              },
                             ),
                           ),
                           SizedBox(
