@@ -34,7 +34,6 @@ class _AddExpenseState extends State<AddExpense> {
   }
 
   Future<void> _loadExpenseTypes() async {
-
     typeList = [];
     typeObj = null;
     typeList = await apiService.fetchExpenseTypes();
@@ -71,14 +70,14 @@ class _AddExpenseState extends State<AddExpense> {
         child: Column(
           children: [
             Container(
-        decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey, // Border color
-          width: 1, // Border width
-        ),
-        // Optional: you can specify the border radius
-        borderRadius: BorderRadius.circular(3), // Rounded corners
-      ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey, // Border color
+                  width: 1, // Border width
+                ),
+                // Optional: you can specify the border radius
+                borderRadius: BorderRadius.circular(3), // Rounded corners
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButton(
@@ -129,7 +128,6 @@ class _AddExpenseState extends State<AddExpense> {
             SizedBox(
               height: 20,
             ),
-
             TextFormField(
               controller: noteController,
               decoration: const InputDecoration(
@@ -138,8 +136,20 @@ class _AddExpenseState extends State<AddExpense> {
             SizedBox(
               height: 20,
             ),
-            SizedBox(width: double.infinity,
+            SizedBox(
+                width: double.infinity,
                 height: 48,
+
+                child: ElevatedButton(
+                    onPressed: () {
+                      // _addVisit();
+                    },
+                    child: Text("Submit")))
+          ],
+        ),
+      ),
+    );
+  }
                 child: ElevatedButton(onPressed: () {
                   _addExpense();
                 }, child: Text("Submit")))
