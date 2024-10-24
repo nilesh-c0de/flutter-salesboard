@@ -65,29 +65,6 @@ class _ViewLeaveScreenState extends State<ViewLeaveScreen> {
         appBar: AppBar(
           title: const Text("Leaves"),
         ),
-        body: list.isNotEmpty
-            ? ListView.builder(
-                itemCount: list.length,
-                itemBuilder: (listContext, index) {
-                  Leaves item = list.elementAt(index);
-                  return ListTile(
-                    title: Text("Name: ${item.name}"),
-                    subtitle: Text("From: ${item.fromDate}"
-                        "\nTo: ${item.toDate}"
-                        "\nStatus: ${item.leaveStatus}"),
-                    onTap: () {
-                      Fluttertoast.showToast(msg: "${item.reason}");
-                    },
-                  );
-                })
-            : Center(
-                child: noData
-                    ? Text(
-                        "No Leaves",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      )
-                    : const CircularProgressIndicator(),
-              ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => Navigator.push(
                   context,
@@ -96,6 +73,68 @@ class _ViewLeaveScreenState extends State<ViewLeaveScreen> {
               .then((value) => value != null ? getLeave() : false),
           child: const Icon(Icons.add),
         ),
+        body: list.isNotEmpty
+            ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                    itemCount: list.length,
+                    itemBuilder: (listContext, index) {
+                      Leaves item = list.elementAt(index);
+                      return Card(
+                        child: ListTile(
+                          title: Text(
+                            "${item.reason}".toUpperCase(),
+                            style: TextStyle(fontSize: 18, color: Colors.indigo),
+                          ),
+                          subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Container(
+                                    child: Text(
+                                      "From - ${item.fromDate}",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Container(
+                                    child: Text(
+                                      "To - ${item.toDate}",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Container(
+                                    child: Text(
+                                      "Status - ${item.leaveStatus}",
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                          // subtitle: Text("From: ${item.fromDate}"
+                          //     "\nTo: ${item.toDate}"
+                          //     "\nStatus: ${item.leaveStatus}"),
+                          onTap: () {
+                            Fluttertoast.showToast(msg: "${item.reason}");
+                          },
+                        ),
+                      );
+                    }),
+              )
+            : Center(
+                child: noData
+                    ? Text(
+                        "No leaves found!",
+                        style: Theme.of(context).textTheme.titleLarge,
+                      )
+                    : const CircularProgressIndicator(),
+              ),
       ),
     );
   }

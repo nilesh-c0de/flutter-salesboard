@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:salesboardapp/models/ExpenseType.dart';
 
 import '../api_service.dart';
@@ -14,12 +15,15 @@ class AddExpense extends StatefulWidget {
 class _AddExpenseState extends State<AddExpense> {
   ApiService apiService = ApiService();
 
-  final TextEditingController noteController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
 
   DateTime? selectedDate;
   List<ExpenseType> typeList = [];
   ExpenseType? typeObj;
+
+  XFile? _image;
 
   @override
   void initState() {
@@ -34,7 +38,11 @@ class _AddExpenseState extends State<AddExpense> {
     typeObj = null;
     typeList = await apiService.fetchExpenseTypes();
 
-    setState(() {});
+    setState(() {
+      if(typeList.isNotEmpty) {
+        typeObj = typeList[0];
+      }
+    });
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -113,7 +121,7 @@ class _AddExpenseState extends State<AddExpense> {
               height: 20,
             ),
             TextFormField(
-              controller: noteController,
+              controller: amountController,
               decoration: const InputDecoration(
                   hintText: "Amount", border: OutlineInputBorder()),
             ),
@@ -131,6 +139,7 @@ class _AddExpenseState extends State<AddExpense> {
             SizedBox(
                 width: double.infinity,
                 height: 48,
+
                 child: ElevatedButton(
                     onPressed: () {
                       // _addVisit();
@@ -140,5 +149,30 @@ class _AddExpenseState extends State<AddExpense> {
         ),
       ),
     );
+  }
+                child: ElevatedButton(onPressed: () {
+                  _addExpense();
+                }, child: Text("Submit")))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addExpense() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      _image = image;
+    });
+
+    var date = selectedDate.toString().split(' ')[0];
+    var amount = amountController.text;
+    var note = noteController.text;
+    var typeId = typeObj?.stateId ?? "";
+
+    ApiService apiService = ApiService();
+    await apiService.addExpense(_image?.path ?? "", date, amount, note, typeId);
   }
 }

@@ -53,8 +53,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       title: Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text("${att.aDate}", style: TextStyle(
-                            color: Colors.green,
-                          fontWeight: FontWeight.bold
+                            color: Colors.indigo,
+                          fontSize: 18,
                         ),),
                       ),
                       subtitle: Column(
@@ -62,12 +62,18 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
-                              child: Container(child: Text("In    -  ${att.aInTime}"),),
+                              child: Container(child: Text("In    -  ${att.aInTime}".toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 18
+                              ),),),
                             ),
 
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0, bottom: 8),
-                              child: Container(child: Text("Out -  ${att.aOutTime}"),),
+                              child: Container(child: Text("Out -  ${att.aOutTime}".toUpperCase(), style:
+                                TextStyle(
+                                  fontSize: 18
+                                ),),),
                             ),
                           ]
                       ),

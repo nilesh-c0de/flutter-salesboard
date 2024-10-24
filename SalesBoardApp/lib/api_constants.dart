@@ -33,8 +33,17 @@ class ApiConstants {
   // add tour plans
   static const String addTourPlanEndPoint = '$baseUrl/tour/add_tour.php';
   static const String viewTourPlanEndPoint = '$baseUrl/tour/tours.php';
+
   static const String tourPlanInDetailsEndPoint =
       '$baseUrl/tour/view_tour_plan.php.php';
   static const String expenseTypesEndPoint =
       '$baseUrl/expense/expenses_type.php';
+
+  static const String tourPlanInDetailsEndPoint = '$baseUrl/tour/view_tour_plan.php.php';
+  static const String expenseTypesEndPoint = '$baseUrl/expense/expenses_type.php';
+
+  static const String addExpenseEndPoint = '$baseUrl/expense/save_expenses.php';
+  static const String showExpensesEndPoint = '$baseUrl/expense/expenses.php';
+  static const String merchExpensesEndPoint = '$baseUrl/merchandise/merch_expense.php';
+  static const String targetsEndPoint = '$baseUrl/targets.php';
 }

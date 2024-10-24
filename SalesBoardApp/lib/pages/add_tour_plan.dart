@@ -51,7 +51,9 @@ class _AddTourPlanState extends State<AddTourPlan> {
     area = null;
     areaList = await apiService.fetchAreas();
     setState(() {
-
+      if(areaList.isNotEmpty) {
+        area = areaList[0];
+      }
     });
   }
 

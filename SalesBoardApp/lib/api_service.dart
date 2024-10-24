@@ -5,12 +5,15 @@ import 'package:http/http.dart' as http;
 import 'package:salesboardapp/api_constants.dart';
 import 'package:salesboardapp/models/Attendance.dart';
 import 'package:salesboardapp/models/Customer.dart';
+import 'package:salesboardapp/models/TargetResponse.dart';
 import 'package:salesboardapp/models/TourItem.dart';
 import 'package:salesboardapp/models/tour_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/Area.dart';
+import 'models/ExpenseResponse.dart';
 import 'models/ExpenseType.dart';
+import 'models/MerchExpenseResponse.dart';
 import 'models/Route.dart';
 import 'models/Visit.dart';
 
@@ -403,5 +406,115 @@ class ApiService {
       return [];
     }
 
+  }
+
+  Future<void> addExpense(String imagePath, String date, String amount, String note, String typeId) async {
+
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse(ApiConstants.addExpenseEndPoint), // Your upload URL
+    );
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'image', // The field name your server expects
+      imagePath,
+    ));
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId') ?? "0";
+
+    request.fields['user_id'] = userId;
+    request.fields['date'] = date;
+    request.fields['expense'] = amount;
+    request.fields['type'] = typeId;
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully!');
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
+    }
+
+  }
+
+  Future<List<ExpenseResponse>> fetchExpenses() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
+
+    final body = {
+      'user_id': userId,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.showExpensesEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> jsonData = jsonResponse['result'];
+      return jsonData.map((visit) => ExpenseResponse.fromJson(visit)).toList();
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
+      return [];
+    }
+
+  }
+
+  Future<List<MerchExpenseResponse>> fetchMerchandise() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+    final event = prefs.getString('type');
+
+    final body = {
+      'user_id': userId,
+      'event': event,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.merchExpensesEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> jsonData = jsonResponse['result'];
+      return jsonData.map((visit) => MerchExpenseResponse.fromJson(visit)).toList();
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
+      return [];
+    }
+  }
+
+  Future<List<TargetResponse>> fetchTargets() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+    final event = prefs.getString('type');
+
+    final body = {
+      'user_id': userId,
+      'event': event,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.targetsEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> jsonData = jsonResponse['result'];
+      return jsonData.map((visit) => TargetResponse.fromJson(visit)).toList();
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
+      return [];
+    }
   }
 }
