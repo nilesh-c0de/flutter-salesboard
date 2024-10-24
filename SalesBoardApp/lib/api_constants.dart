@@ -30,6 +30,7 @@ class ApiConstants {
   static const String addTourPlanEndPoint = '$baseUrl/tour/add_tour.php';
   static const String viewTourPlanEndPoint = '$baseUrl/tour/tours.php';
   static const String tourPlanInDetailsEndPoint = '$baseUrl/tour/view_tour_plan.php.php';
+  static const String expenseTypesEndPoint = '$baseUrl/expense/expenses_type.php';
 
 
 }

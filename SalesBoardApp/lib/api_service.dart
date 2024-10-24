@@ -10,6 +10,7 @@ import 'package:salesboardapp/models/tour_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/Area.dart';
+import 'models/ExpenseType.dart';
 import 'models/Route.dart';
 import 'models/Visit.dart';
 
@@ -370,6 +371,33 @@ class ApiService {
       final jsonResponse = json.decode(response.body);
       final List<dynamic> jsonData = jsonResponse['result'];
       return jsonData.map((visit) => TourItem.fromJson(visit)).toList();
+    } else {
+      print('Failed to upload image. Status code: ${response.statusCode}');
+      return [];
+    }
+
+  }
+
+  Future<List<ExpenseType>> fetchExpenseTypes() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
+
+    final body = {
+      'user_id': userId,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.expenseTypesEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      final List<dynamic> jsonData = jsonResponse['result'];
+      return jsonData.map((visit) => ExpenseType.fromJson(visit)).toList();
     } else {
       print('Failed to upload image. Status code: ${response.statusCode}');
       return [];

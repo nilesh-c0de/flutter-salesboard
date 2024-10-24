@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salesboardapp/main.dart';
+import 'package:salesboardapp/pages/add_expense.dart';
 import 'package:salesboardapp/pages/add_farmer_screen.dart';
 import 'package:salesboardapp/pages/add_tour_plan.dart';
 import 'package:salesboardapp/pages/add_visit.dart';
@@ -34,10 +35,10 @@ class _MainScreenState extends State<MainScreen> {
       body: screens[currentIndex],
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(onPressed: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => AddFarmerScreen()),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddExpense()),
+        );
       },
       child: const Icon(Icons.add),),
       bottomNavigationBar: BottomNavigationBar(
