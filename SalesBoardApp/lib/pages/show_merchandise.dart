@@ -1,52 +1,56 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:salesboardapp/models/tour_response.dart';
-import 'package:salesboardapp/pages/add_tour_plan.dart';
-import 'package:salesboardapp/pages/tour_plan_details.dart';
+import 'package:salesboardapp/models/MerchExpenseResponse.dart';
+import 'package:salesboardapp/pages/add_merchandise.dart';
 
 import '../api_service.dart';
 
-class ViewTourPlan extends StatefulWidget {
-  const ViewTourPlan({super.key});
+class ShowMerchandise extends StatefulWidget {
+  const ShowMerchandise({super.key});
 
   @override
-  State<ViewTourPlan> createState() => _ViewTourPlanState();
+  State<ShowMerchandise> createState() => _ShowMerchandiseState();
 }
 
-class _ViewTourPlanState extends State<ViewTourPlan> {
+class _ShowMerchandiseState extends State<ShowMerchandise> {
 
   ApiService apiService = ApiService();
 
-  late Future<List<TourResponse>> tourPlanList;
+  late Future<List<MerchExpenseResponse>> merchandiseList;
 
   @override
   void initState() {
     super.initState();
 
-    tourPlanList = apiService.fetchTourPlans();
+    merchandiseList = apiService.fetchMerchandise();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Monthly Tour Plan")),
+      appBar: AppBar(title: Text('Merchandise')),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AddTourPlan()),
+          MaterialPageRoute(builder: (context) => AddMerchandise()),
         );
       },
         child: const Icon(Icons.add),),
-      body: FutureBuilder<List<TourResponse>>(
-        future: tourPlanList,
+      body: FutureBuilder<List<MerchExpenseResponse>>(
+        future: merchandiseList,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Text('Error: ${snapshot.error}'),
+            ));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No tours found.'));
+            return Center(child: Text('No records found!', style: TextStyle(
+                fontSize: 20
+            ),));
           }
 
           final visits = snapshot.data!;
@@ -61,25 +65,26 @@ class _ViewTourPlanState extends State<ViewTourPlan> {
                   child: Card(
                     child: InkWell(
                       onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TourPlanDetails(tpId: visit.tp_id, mId: visit.month_id, uId: visit.user_name)),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => TourPlanDetails(tpId: visit.tp_id, mId: visit.month_id, uId: visit.user_name)),
+                        // );
                       },
                       child: ListTile(
-                        title: Text("${visit.month}".toUpperCase(), style: TextStyle(
-                            color: Colors.indigo,
-                          fontSize: 18
+                        title: Text("${visit.march_name}", style: TextStyle(
+                            color: Colors.indigoAccent.shade200
                         ),),
                         subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Container(child: Text("${visit.user_name}", style: TextStyle(
-                                  fontSize: 18
-                                ),),),
+                                child: Container(child: Text("${visit.shop_name}"),),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Container(child: Text("${visit.quantity}"),),
                               ),
                             ]
                         ),
@@ -94,4 +99,5 @@ class _ViewTourPlanState extends State<ViewTourPlan> {
       ),
     );
   }
+
 }

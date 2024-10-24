@@ -28,7 +28,7 @@ class _VisitsScreenState extends State<VisitsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('User Visits')),
+      appBar: AppBar(title: Text('Visits')),
       body: FutureBuilder<List<Visit>>(
         future: userVisitList,
         builder: (context, snapshot) {
@@ -52,24 +52,27 @@ class _VisitsScreenState extends State<VisitsScreen> {
                   child: Card(
                     child: ListTile(
                       title: Text("${visit.storeName}", style: TextStyle(
-                        color: Colors.indigoAccent.shade200
+                        color: Colors.indigo,
+                        fontSize: 20
                       ),),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 4.0),
-                            child: Container(child: Text("${visit.ownerName}"),),
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Container(child: Text("${visit.contact}"),),
+                            child: Container(child: Text("${visit.ownerName} (${visit.contact})", style:
+                              TextStyle(
+                                fontSize: 14
+                              ),),),
                           ),
 
                           Padding(
                             padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
-                            child: Container(child: Text("${visit.note}"),),
+                            child: Container(child: Text("Note - ${visit.note}", style:
+                              TextStyle(
+                                fontSize: 14,
+                                color: Colors.black
+                              ),),),
                           ),
                     ]
                       ),

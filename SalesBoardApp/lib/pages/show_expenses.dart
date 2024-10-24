@@ -1,44 +1,43 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:salesboardapp/models/tour_response.dart';
-import 'package:salesboardapp/pages/add_tour_plan.dart';
-import 'package:salesboardapp/pages/tour_plan_details.dart';
+import 'package:salesboardapp/models/ExpenseResponse.dart';
+import 'package:salesboardapp/pages/add_expense.dart';
 
 import '../api_service.dart';
 
-class ViewTourPlan extends StatefulWidget {
-  const ViewTourPlan({super.key});
+class ShowExpenses extends StatefulWidget {
+  const ShowExpenses({super.key});
 
   @override
-  State<ViewTourPlan> createState() => _ViewTourPlanState();
+  State<ShowExpenses> createState() => _ShowExpensesState();
 }
 
-class _ViewTourPlanState extends State<ViewTourPlan> {
+class _ShowExpensesState extends State<ShowExpenses> {
 
   ApiService apiService = ApiService();
 
-  late Future<List<TourResponse>> tourPlanList;
+  late Future<List<ExpenseResponse>> tourPlanList;
 
   @override
   void initState() {
     super.initState();
 
-    tourPlanList = apiService.fetchTourPlans();
+    tourPlanList = apiService.fetchExpenses();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Monthly Tour Plan")),
+      appBar: AppBar(title: Text('Expenses')),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AddTourPlan()),
+          MaterialPageRoute(builder: (context) => AddExpense()),
         );
       },
         child: const Icon(Icons.add),),
-      body: FutureBuilder<List<TourResponse>>(
+      body: FutureBuilder<List<ExpenseResponse>>(
         future: tourPlanList,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -46,7 +45,9 @@ class _ViewTourPlanState extends State<ViewTourPlan> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No tours found.'));
+            return Center(child: Text('No records found.', style: TextStyle(
+              fontSize: 20
+            ),));
           }
 
           final visits = snapshot.data!;
@@ -61,25 +62,32 @@ class _ViewTourPlanState extends State<ViewTourPlan> {
                   child: Card(
                     child: InkWell(
                       onTap: (){
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TourPlanDetails(tpId: visit.tp_id, mId: visit.month_id, uId: visit.user_name)),
-                        );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => TourPlanDetails(tpId: visit.tp_id, mId: visit.month_id, uId: visit.user_name)),
+                        // );
                       },
                       child: ListTile(
-                        title: Text("${visit.month}".toUpperCase(), style: TextStyle(
+                        title: Text("${visit.allow_name} - ${visit.allow_amt}".toUpperCase(), style: TextStyle(
                             color: Colors.indigo,
-                          fontSize: 18
+                            fontSize: 18,
+
                         ),),
                         subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Container(child: Text("${visit.user_name}", style: TextStyle(
+                                child: Container(child: Text("${visit.allow_date}",
+                                style: TextStyle(
                                   fontSize: 18
                                 ),),),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Container(child: Text("${visit.user_name}", style:
+                                  TextStyle(fontSize: 18),),),
                               ),
                             ]
                         ),

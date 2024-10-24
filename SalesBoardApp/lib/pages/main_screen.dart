@@ -9,6 +9,7 @@ import 'package:salesboardapp/pages/add_tour_plan.dart';
 import 'package:salesboardapp/pages/add_visit.dart';
 import 'package:salesboardapp/pages/profile_screen.dart';
 import 'package:salesboardapp/pages/dashboard_screen.dart';
+import 'package:salesboardapp/pages/show_expenses.dart';
 
 import 'favorite_screen.dart';
 import 'mydropdown.dart';
@@ -37,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButton: FloatingActionButton(onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => AddExpense()),
+          MaterialPageRoute(builder: (context) => ShowExpenses()),
         );
       },
       child: const Icon(Icons.add),),

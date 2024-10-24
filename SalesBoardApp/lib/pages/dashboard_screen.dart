@@ -4,6 +4,9 @@ import 'package:salesboardapp/pages/farmer_screen.dart';
 import 'package:salesboardapp/pages/orders_screen.dart';
 import 'package:salesboardapp/pages/profile_screen.dart';
 import 'package:salesboardapp/pages/mark_attendance.dart';
+import 'package:salesboardapp/pages/show_expenses.dart';
+import 'package:salesboardapp/pages/show_merchandise.dart';
+import 'package:salesboardapp/pages/target_screen.dart';
 import 'package:salesboardapp/pages/view_leave_screen.dart';
 import 'package:salesboardapp/pages/view_tour_plan.dart';
 import 'package:salesboardapp/pages/visits_screen.dart';
@@ -155,15 +158,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           SizedBox(
                             width: 80,
-                            child: Column(
-                              children: [
-                                Image.asset("assets/icon_tour.png",
-                                    width: 40, height: 40),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text("Tours")
-                              ],
+                            child: InkWell(
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/icon_tour.png",
+                                      width: 40, height: 40),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  const Text("Tours")
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ViewTourPlan()),
+                                );
+                              },
                             ),
                           ),
                           SizedBox(
@@ -180,10 +191,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ],
                               ),
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => ViewTourPlan()),
-                                );
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(builder: (context) => ViewTourPlan()),
+                                // );
                               },
                             ),
                           ),
@@ -227,15 +238,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           SizedBox(
                             width: 80,
-                            child: Column(
-                              children: [
-                                Image.asset("assets/icon_target.png",
-                                    width: 40, height: 40),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text("Target")
-                              ],
+                            child: InkWell(
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/icon_target.png",
+                                      width: 40, height: 40),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  const Text("Target")
+                                ],
+                              ),
+                             onTap:() {
+                               Navigator.push(
+                                   context,
+                                   MaterialPageRoute(
+                                       builder: (context) =>
+                                       const TargetScreen()));
+                             },
                             ),
                           ),
                           SizedBox(
@@ -289,15 +309,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         children: [
                           SizedBox(
                             width: 85,
-                            child: Column(
-                              children: [
-                                Image.asset("assets/merchandise.png",
-                                    width: 40, height: 40),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text("Merchandise")
-                              ],
+                            child: InkWell(
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/merchandise.png",
+                                      width: 40, height: 40),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  const Text("Merchandise")
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ShowMerchandise()),
+                                );
+                              },
                             ),
                           ),
                           SizedBox(
@@ -315,15 +344,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           SizedBox(
                             width: 80,
-                            child: Column(
-                              children: [
-                                Image.asset("assets/icon_expense.png",
-                                    width: 40, height: 40),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text("Expenses")
-                              ],
+                            child: InkWell(
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/icon_expense.png",
+                                      width: 40, height: 40),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  const Text("Expenses")
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ShowExpenses()),
+                                );
+                              },
                             ),
                           )
                         ],
