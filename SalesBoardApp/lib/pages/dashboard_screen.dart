@@ -4,7 +4,9 @@ import 'package:salesboardapp/pages/farmer_screen.dart';
 import 'package:salesboardapp/pages/orders_screen.dart';
 import 'package:salesboardapp/pages/profile_screen.dart';
 import 'package:salesboardapp/pages/mark_attendance.dart';
+import 'package:salesboardapp/pages/view_brochures_screen.dart';
 import 'package:salesboardapp/pages/view_leave_screen.dart';
+import 'package:salesboardapp/pages/view_probs_screen.dart';
 import 'package:salesboardapp/pages/view_tour_plan.dart';
 import 'package:salesboardapp/pages/visits_screen.dart';
 
@@ -85,7 +87,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => FarmerScreen()),
+                                      builder: (context) =>
+                                          const FarmerScreen()),
                                 );
                               },
                             ),
@@ -107,7 +110,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => VisitsScreen()),
+                                      builder: (context) =>
+                                          const VisitsScreen()),
                                 );
                               },
                             ),
@@ -132,7 +136,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => OrdersScreen()),
+                                      builder: (context) =>
+                                          const OrdersScreen()),
                                 );
                               },
                             ),
@@ -182,7 +187,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => ViewTourPlan()),
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ViewTourPlan()),
                                 );
                               },
                             ),
@@ -204,7 +211,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => AttendanceScreen()),
+                                      builder: (context) =>
+                                          const AttendanceScreen()),
                                 );
                               },
                             ),
@@ -375,6 +383,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                   onTap: () {},
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    "Brochures",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                  ),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ViewBrochuresScreen())),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    "Probables",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                  ),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ViewProbScreen())),
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
