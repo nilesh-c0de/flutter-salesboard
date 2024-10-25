@@ -39,7 +39,7 @@ class _AddExpenseState extends State<AddExpense> {
     typeList = await apiService.fetchExpenseTypes();
 
     setState(() {
-      if(typeList.isNotEmpty) {
+      if (typeList.isNotEmpty) {
         typeObj = typeList[0];
       }
     });
@@ -122,6 +122,7 @@ class _AddExpenseState extends State<AddExpense> {
             ),
             TextFormField(
               controller: amountController,
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                   hintText: "Amount", border: OutlineInputBorder()),
             ),
@@ -139,20 +140,11 @@ class _AddExpenseState extends State<AddExpense> {
             SizedBox(
                 width: double.infinity,
                 height: 48,
-
                 child: ElevatedButton(
                     onPressed: () {
-                      // _addVisit();
+                      _addExpense();
                     },
                     child: Text("Submit")))
-          ],
-        ),
-      ),
-    );
-  }
-                child: ElevatedButton(onPressed: () {
-                  _addExpense();
-                }, child: Text("Submit")))
           ],
         ),
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:salesboardapp/pages/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -43,10 +45,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
+
+                    logOut();
+
                   },
                   child: const Text("Log Out"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  onPressed: () {
+
+                    Fluttertoast.showToast(msg: "Account deleted!");
+                    logOut();
+
+                  },
+                  child: const Text("Delete Account"),
                 ),
               ],
             ),
@@ -54,5 +67,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> logOut() async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear(); // This clears all the preferences
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const LoginScreen()));
   }
 }

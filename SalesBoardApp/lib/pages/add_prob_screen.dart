@@ -76,27 +76,37 @@ class _AddProbScreenState extends State<AddProbScreen> {
                   const SizedBox(
                     height: 16,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: DropdownButton<Probs>(
-                      isExpanded: true,
-                      hint: const Text('Select Type'),
-                      value: selectedType,
-                      onChanged: (Probs? value) {
-                        setState(() {
-                          selectedType = value ?? listProb.first;
-                        });
-                      },
-                      items: listProb.map((Probs area) {
-                        return DropdownMenuItem<Probs>(
-                          value: area,
-                          child: Text(area.probName ?? ""),
-                        );
-                      }).toList(),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey, // Border color
+                        width: 1, // Border width
+                      ),
+                      // Optional: you can specify the border radius
+                      borderRadius: BorderRadius.circular(3), // Rounded corners
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      child: DropdownButton<Probs>(
+                        isExpanded: true,
+                        hint: const Text('Select Type'),
+                        value: selectedType,
+                        onChanged: (Probs? value) {
+                          setState(() {
+                            selectedType = value ?? listProb.first;
+                          });
+                        },
+                        items: listProb.map((Probs area) {
+                          return DropdownMenuItem<Probs>(
+                            value: area,
+                            child: Text(area.probName ?? ""),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                   const SizedBox(
-                    height: 26,
+                    height: 10,
                   ),
                   TextFormField(
                     validator: (value) {
@@ -116,7 +126,7 @@ class _AddProbScreenState extends State<AddProbScreen> {
                     keyboardType: TextInputType.text,
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
                   TextFormField(
                     validator: (value) {
@@ -137,7 +147,7 @@ class _AddProbScreenState extends State<AddProbScreen> {
                     keyboardType: TextInputType.text,
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
                   TextFormField(
                     validator: (value) {
@@ -146,7 +156,6 @@ class _AddProbScreenState extends State<AddProbScreen> {
                       }
                       return null;
                     },
-                    maxLength: 10,
                     onTap: () {},
                     decoration: const InputDecoration(
                         hintText: "Enter Mobile Number",
@@ -159,7 +168,7 @@ class _AddProbScreenState extends State<AddProbScreen> {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(
-                    height: 26,
+                    height: 10,
                   ),
                   TextFormField(
                     validator: (value) {
@@ -180,14 +189,14 @@ class _AddProbScreenState extends State<AddProbScreen> {
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(
-                    height: 26,
+                    height: 10,
                   ),
                   Text(
                     address,
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                   const SizedBox(
-                    height: 26,
+                    height: 10,
                   ),
                   ElevatedButton(
                       onPressed: () {

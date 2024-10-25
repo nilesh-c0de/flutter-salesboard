@@ -95,6 +95,7 @@ class _AddMerchandiseState extends State<AddMerchandise> {
             ),
             TextFormField(
               controller: quantityController,
+              keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                   hintText: "Quantity", border: OutlineInputBorder()),
             ),

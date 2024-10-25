@@ -51,9 +51,9 @@ class _VisitsScreenState extends State<VisitsScreen> {
                   padding: const EdgeInsets.all(0),
                   child: Card(
                     child: ListTile(
-                      title: Text("${visit.storeName}", style: TextStyle(
+                      title: Text("${visit.storeName}".toUpperCase(), style: TextStyle(
                         color: Colors.indigo,
-                        fontSize: 20
+                        fontSize: 18
                       ),),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +62,7 @@ class _VisitsScreenState extends State<VisitsScreen> {
                             padding: const EdgeInsets.only(top: 4.0),
                             child: Container(child: Text("${visit.ownerName} (${visit.contact})", style:
                               TextStyle(
-                                fontSize: 14
+                                fontSize: 18
                               ),),),
                           ),
 
@@ -70,9 +70,16 @@ class _VisitsScreenState extends State<VisitsScreen> {
                             padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
                             child: Container(child: Text("Note - ${visit.note}", style:
                               TextStyle(
-                                fontSize: 14,
-                                color: Colors.black
+                                fontSize: 18,
                               ),),),
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
+                            child: Container(child: Text("Date - ${visit.followupDate}", style:
+                            TextStyle(
+                                fontSize: 18,
+                            ),),),
                           ),
                     ]
                       ),

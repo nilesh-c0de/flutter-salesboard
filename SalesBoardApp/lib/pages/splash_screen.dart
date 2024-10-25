@@ -36,6 +36,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final prefs = await SharedPreferences.getInstance();
 
+    await Future.delayed(Duration(seconds: 2));
+
     if(prefs.containsKey("first_time")) {
       if(prefs.containsKey("isLoggedIn")) {
         Navigator.push(

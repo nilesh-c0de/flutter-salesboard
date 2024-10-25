@@ -32,88 +32,90 @@ class _AddDealerScreenState extends State<AddDealerScreen> {
       appBar: AppBar(
         title: Text("Add Dealer"),
       ),
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  TextFormField(
-                    keyboardType: TextInputType.text,
-                    controller: _companyController,
-                    decoration: const InputDecoration(
-                        hintText: "Company", border: OutlineInputBorder()),
-                  ),
-                  SizedBox(height: 10,),
-                  TextFormField(
-                    keyboardType: TextInputType.text,
-                    controller: _ownerController,
-                    decoration: const InputDecoration(
-                        hintText: "Owner", border: OutlineInputBorder()),
-                  ),
-                  SizedBox(height: 10,),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    controller: _mobileController,
-                    decoration: const InputDecoration(
-                        hintText: "Contact", border: OutlineInputBorder()),
-                  ),
-                  SizedBox(height: 10,),
-                  TextFormField(
-                    keyboardType: TextInputType.text,
-                    controller: _keeperController,
-                    decoration: const InputDecoration(
-                        hintText: "Keeper", border: OutlineInputBorder()),
-                  ),
-                  SizedBox(height: 10,),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    controller: _keeperMobileController,
-                    decoration: const InputDecoration(
-                        hintText: "Keeper Contact", border: OutlineInputBorder()),
-                  ),
-                  SizedBox(height: 10,),
-                  TextFormField(
-                    keyboardType: TextInputType.text,
-                    controller: _gstController,
-                    decoration: const InputDecoration(
-                        hintText: "GST No.", border: OutlineInputBorder()),
-                  ),
-                  SizedBox(height: 10,),
-                  TextFormField(
-                    keyboardType: TextInputType.text,
-                    controller: _panController,
-                    decoration: const InputDecoration(
-                        hintText: "PAN No.", border: OutlineInputBorder()),
-                  ),
-                  SizedBox(height: 10,),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(onPressed: () {
-                      _addDealer();
-                    }, child: Text("SUBMIT")),
-                  ),
-
-
-                ],
+      body: SingleChildScrollView(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      keyboardType: TextInputType.text,
+                      controller: _companyController,
+                      decoration: const InputDecoration(
+                          hintText: "Company", border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      keyboardType: TextInputType.text,
+                      controller: _ownerController,
+                      decoration: const InputDecoration(
+                          hintText: "Owner", border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: _mobileController,
+                      decoration: const InputDecoration(
+                          hintText: "Contact", border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      keyboardType: TextInputType.text,
+                      controller: _keeperController,
+                      decoration: const InputDecoration(
+                          hintText: "Keeper", border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: _keeperMobileController,
+                      decoration: const InputDecoration(
+                          hintText: "Keeper Contact", border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      keyboardType: TextInputType.text,
+                      controller: _gstController,
+                      decoration: const InputDecoration(
+                          hintText: "GST No.", border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10,),
+                    TextFormField(
+                      keyboardType: TextInputType.text,
+                      controller: _panController,
+                      decoration: const InputDecoration(
+                          hintText: "PAN No.", border: OutlineInputBorder()),
+                    ),
+                    SizedBox(height: 10,),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(onPressed: () {
+                        _addDealer();
+                      }, child: Text("SUBMIT")),
+                    ),
+        
+        
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 8),
-              child: SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddFarmerScreen(areaId: widget.areaId, routeId: widget.routeId)),
-                  );
-                }, child: Text("ADD FARMER")),
-              ),
-            )
-          ]
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 8),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AddFarmerScreen(areaId: widget.areaId, routeId: widget.routeId)),
+                    );
+                  }, child: Text("ADD FARMER")),
+                ),
+              )
+            ]
+        ),
       ),
     );
   }

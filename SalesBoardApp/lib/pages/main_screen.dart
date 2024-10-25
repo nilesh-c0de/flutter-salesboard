@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salesboardapp/main.dart';
+import 'package:salesboardapp/pages/add_cart.dart';
 import 'package:salesboardapp/pages/add_expense.dart';
 import 'package:salesboardapp/pages/add_farmer_screen.dart';
 import 'package:salesboardapp/pages/add_tour_plan.dart';
@@ -34,14 +35,14 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: screens[currentIndex],
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ShowExpenses()),
-        );
-      },
-      child: const Icon(Icons.add),),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(onPressed: () {
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => AddCart()),
+      //   );
+      // },
+      // child: const Icon(Icons.add),),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           currentIndex: currentIndex,

@@ -32,7 +32,7 @@ class _TourPlanDetailsState extends State<TourPlanDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('User Visits')),
+      appBar: AppBar(title: Text('Datewise Tour Plan')),
       body: FutureBuilder<List<TourItem>>(
         future: tourPlanList,
         builder: (context, snapshot) {
@@ -64,26 +64,39 @@ class _TourPlanDetailsState extends State<TourPlanDetails> {
                       // },
                       child: ListTile(
                         title: Text("${visit.tour_date}", style: TextStyle(
-                            color: Colors.indigoAccent.shade200
+                            color: Colors.indigo,
+                          fontSize: 18
                         ),),
                         subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Container(child: Text("${visit.area_name}"),),
+                                child: Container(child: Text("Area - ${visit.area_name}",
+                                style: TextStyle(
+                                  fontSize: 18
+                                ),),),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Container(child: Text("${visit.route_name}"),),
+                                child: Container(child: Text("Route - ${visit.route_name}",
+                                style: TextStyle(
+                                  fontSize: 18
+                                ),),),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Container(child: Text("${visit.target_call}"),),
+                                child: Container(child: Text("Calls - ${visit.target_call}", style:
+                                  TextStyle(
+                                    fontSize: 18
+                                  ),),),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 4.0),
-                                child: Container(child: Text("${visit.user_name}"),),
+                                child: Container(child: Text("SO - ${visit.user_name}", style:
+                                  TextStyle(
+                                    fontSize: 18
+                                  ),),),
                               ),
                             ]
                         ),

@@ -151,6 +151,7 @@ class _AddTourPlanState extends State<AddTourPlan> {
           ),),
           SizedBox(height: 8,),
           TextFormField(
+            keyboardType: TextInputType.number,
             controller: noteController,
             decoration: const InputDecoration(
                 hintText: "e.g. 30", border: OutlineInputBorder()),

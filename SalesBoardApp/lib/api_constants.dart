@@ -35,15 +35,16 @@ class ApiConstants {
   static const String viewTourPlanEndPoint = '$baseUrl/tour/tours.php';
 
   static const String tourPlanInDetailsEndPoint =
-      '$baseUrl/tour/view_tour_plan.php.php';
+      '$baseUrl/tour/view_tour_plan.php';
   static const String expenseTypesEndPoint =
       '$baseUrl/expense/expenses_type.php';
 
-  static const String tourPlanInDetailsEndPoint = '$baseUrl/tour/view_tour_plan.php.php';
-  static const String expenseTypesEndPoint = '$baseUrl/expense/expenses_type.php';
-
   static const String addExpenseEndPoint = '$baseUrl/expense/save_expenses.php';
   static const String showExpensesEndPoint = '$baseUrl/expense/expenses.php';
-  static const String merchExpensesEndPoint = '$baseUrl/merchandise/merch_expense.php';
+  static const String merchExpensesEndPoint =
+      '$baseUrl/merchandise/merch_expense.php';
   static const String targetsEndPoint = '$baseUrl/targets.php';
+  static const String addToCartEndPoint = '$baseUrl/cart_page/cart.php';
+  static const String cartItemsEndPoint = '$baseUrl/cart_page/cart_items.php';
+  static const String addUserEndPoint = '$baseUrl/add_new_user.php';
 }

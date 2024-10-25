@@ -65,15 +65,46 @@ class _ViewProbScreenState extends State<ViewProbScreen> {
                 itemCount: list.length,
                 itemBuilder: (context, index) {
                   ProbData item = list.elementAt(index);
-                  return ListTile(
-                    title: Text("Shop: ${item.shop}"),
-                    subtitle: Text("Owner: ${item.owner}"
-                        "\nEmail: ${item.email}"
-                        "\nUser: ${item.user}"
-                        "\nAddress: ${item.address}"),
-                    onTap: () {
-                      Fluttertoast.showToast(msg: "${item.address}");
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: ListTile(
+                          title: Text("${item.shop}".toUpperCase(), style:
+                            TextStyle(
+                              fontSize: 18,
+                              color: Colors.indigo
+                            ),),
+                          subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Container(child: Text("${item.owner} (${item.mobile})", style: TextStyle(
+                                      fontSize: 18
+                                  ),),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Container(child: Text("${item.date}", style: TextStyle(
+                                      fontSize: 18
+                                  ),),),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4.0),
+                                  child: Container(child: Text("${item.type}", style: TextStyle(
+                                      fontSize: 18
+                                  ),),),
+                                ),
+                              ]
+                          ),
+                          onTap: () {
+                            Fluttertoast.showToast(msg: "${item.address}");
+                          },
+                        ),
+                      ),
+                    ),
                   );
                 })
             : Center(

@@ -1,11 +1,45 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:salesboardapp/api_service.dart';
 import 'package:salesboardapp/pages/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../models/Common.dart';
+
+
+class LocationService {
+  Future<Position?> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can access the position.
+    return await Geolocator.getCurrentPosition();
+  }
+}
+
 
 class MarkAttendance extends StatefulWidget {
   final bool isDayIn;
@@ -21,13 +55,18 @@ class _MarkAttendanceState extends State<MarkAttendance> {
   final TextEditingController _readingController = TextEditingController();
   XFile? _image;
   String username = "";
+  String lat = "";
+  String lng = "";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
+
     getUsername();
+
+
   }
 
   @override
@@ -83,7 +122,9 @@ class _MarkAttendanceState extends State<MarkAttendance> {
                   height: 20,
                 ),
                 TextFormField(
+                  textAlign: TextAlign.center,
                   controller: _readingController,
+                  keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                       hintText: "reading", border: OutlineInputBorder()),
                 ),
@@ -122,18 +163,43 @@ class _MarkAttendanceState extends State<MarkAttendance> {
       _image = image;
     });
 
+    if(lat == "0.0" || lng == "0.0") {
+      Fluttertoast.showToast(msg: "Wait.. Getting Location!");
+    }
+
     ApiService apiService = ApiService();
-    await apiService.uploadImage(_image?.path ?? "", reading);
+    Common? result = await apiService.uploadImage(_image?.path ?? "", reading, lat.toString(), lng.toString(), widget.isDayIn);
+
+    if(result != null) {
+      var message = result.message;
+      Fluttertoast.showToast(msg: message);
+      if (mounted) Navigator.pop(context, true);
+    }
   }
 
   Future<void> getUsername() async {
 
     final prefs = await SharedPreferences.getInstance();
     username = prefs.getString("name") ?? "";
-
     setState(() {
 
     });
+
+    print("username - $username");
+    LocationService service = LocationService();
+    Position? position = await service.getCurrentLocation();
+    lat = 0.0.toString();
+    lng = 0.0.toString();
+
+    if (position != null) {
+      lat = position.latitude.toString();
+      lng = position.longitude.toString();
+      print('Current location: ${position.latitude}, ${position.longitude}');
+    }
+
+    // setState(() {
+    //
+    // });
   }
 
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:salesboardapp/api_service.dart';
 import 'package:salesboardapp/pages/attendance_screen.dart';
 import 'package:salesboardapp/pages/farmer_screen.dart';
 import 'package:salesboardapp/pages/orders_screen.dart';
@@ -13,6 +15,7 @@ import 'package:salesboardapp/pages/view_leave_screen.dart';
 import 'package:salesboardapp/pages/view_probs_screen.dart';
 import 'package:salesboardapp/pages/view_tour_plan.dart';
 import 'package:salesboardapp/pages/visits_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -22,8 +25,25 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+
+  ApiService apiService = ApiService();
+  String loginStatus = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    print("initstate");
+    fetchLoginStatus();
+  }
+
+  fetchLoginStatus() async {
+    loginStatus = await apiService.fetchLoginStatus();
+    print("status - $loginStatus");
+  }
   @override
   Widget build(BuildContext context) {
+    print("inside build");
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -193,7 +213,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   const SizedBox(
                                     height: 8,
                                   ),
-                                  const Text("Reports")
+                                  const Text("Brochures")
                                 ],
                               ),
                               onTap: () {
@@ -201,7 +221,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const ViewTourPlan()),
+                                          const ViewBrochuresScreen()),
                                 );
                                 // Navigator.push(
                                 //   context,
@@ -294,15 +314,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           SizedBox(
                             width: 80,
-                            child: Column(
-                              children: [
-                                Image.asset("assets/icon_stock.png",
-                                    width: 40, height: 40),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text("Stocks")
-                              ],
+                            child: InkWell(
+                              child: Column(
+                                children: [
+                                  Image.asset("assets/icon_stock.png",
+                                      width: 40, height: 40),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  const Text("Probables")
+                                ],
+                              ),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                      const ViewProbScreen())),
                             ),
                           )
                         ],
@@ -388,82 +415,92 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ),
       drawer: Drawer(
+        width: 200,
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 ListTile(
-                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.access_time),
                   title: const Text(
                     "Day In",
                     textAlign: TextAlign.start,
                     style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MarkAttendance(
-                              isDayIn: true,
-                            )));
+                    
+                    if(loginStatus == "out") {
+                      Fluttertoast.showToast(msg: "Your day is complete!");
+                      return;
+                    } else if(loginStatus == "in") {
+                      Fluttertoast.showToast(msg: "Attendance already marked!");
+                    } else {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const MarkAttendance(
+                            isDayIn: true,
+                          )));
+                    }
+                    // Navigator.pop(context);
                   },
                 ),
+                // ListTile(
+                //   contentPadding: EdgeInsets.zero,
+                //   title: const Text(
+                //     "Daily Update",
+                //     textAlign: TextAlign.start,
+                //     style: TextStyle(color: Colors.black, fontSize: 16.0),
+                //   ),
+                //   onTap: () {},
+                // ),
+                // ListTile(
+                //   contentPadding: EdgeInsets.zero,
+                //   title: const Text(
+                //     "Tour Plan",
+                //     textAlign: TextAlign.start,
+                //     style: TextStyle(color: Colors.black, fontSize: 16.0),
+                //   ),
+                //   onTap: () {},
+                // ),
+                // ListTile(
+                //   contentPadding: EdgeInsets.zero,
+                //   title: const Text(
+                //     "Brochures",
+                //     textAlign: TextAlign.start,
+                //     style: TextStyle(color: Colors.black, fontSize: 16.0),
+                //   ),
+                //   onTap: () => Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => const ViewBrochuresScreen())),
+                // ),
+                // ListTile(
+                //   contentPadding: EdgeInsets.zero,
+                //   title: const Text(
+                //     "Probables",
+                //     textAlign: TextAlign.start,
+                //     style: TextStyle(color: Colors.black, fontSize: 16.0),
+                //   ),
+                //   onTap: () => Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => const ViewProbScreen())),
+                // ),
+                // ListTile(
+                //   contentPadding: EdgeInsets.zero,
+                //   title: const Text(
+                //     "Apply Leave",
+                //     textAlign: TextAlign.start,
+                //     style: TextStyle(color: Colors.black, fontSize: 16.0),
+                //   ),
+                //   onTap: () {},
+                // ),
                 ListTile(
-                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.account_circle_outlined),
                   title: const Text(
-                    "Daily Update",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text(
-                    "Tour Plan",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text(
-                    "Brochures",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
-                  ),
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ViewBrochuresScreen())),
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text(
-                    "Probables",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
-                  ),
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ViewProbScreen())),
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text(
-                    "Apply Leave",
-                    textAlign: TextAlign.start,
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
-                  ),
-                  onTap: () {},
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text(
-                    "User Profile",
+                    "Profile",
                     textAlign: TextAlign.start,
                     style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
@@ -473,17 +510,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                 ),
                 ListTile(
-                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.access_alarms_rounded),
                   title: const Text(
                     "Day Out",
                     textAlign: TextAlign.start,
                     style: TextStyle(color: Colors.black, fontSize: 16.0),
                   ),
                   onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const MarkAttendance(
-                              isDayIn: false,
-                            )));
+
+                    print("inside out - $loginStatus");
+                    if(loginStatus == "out") {
+                      Fluttertoast.showToast(msg: "Your day is complete!");
+                      return;
+                    } else if(loginStatus == "in") {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const MarkAttendance(
+                            isDayIn: false,
+                          )));
+
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) =>  MarkAttendance(
+                      //       isDayIn: true,
+                      //     )));
+                    } else {
+                      Fluttertoast.showToast(msg: "Please mark attendance!");
+                      return;
+                    }
+                    // Navigator.pop(context);
                   },
                 ),
               ],
@@ -493,4 +546,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+
+
 }

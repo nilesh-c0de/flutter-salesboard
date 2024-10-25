@@ -194,7 +194,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => const AddCart()),
+                                        builder: (context) => AddCart(itemId: farmer.custId,)),
                                   );
                                 },
                                 backgroundColor: Colors.blue,

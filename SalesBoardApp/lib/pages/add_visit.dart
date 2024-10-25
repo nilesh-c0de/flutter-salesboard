@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:salesboardapp/api_service.dart';
+
+import 'mark_attendance.dart';
 
 class AddVisit extends StatefulWidget {
 
@@ -81,13 +85,29 @@ class _AddVisitState extends State<AddVisit> {
     );
   }
 
-  void _addVisit() {
+  Future<void> _addVisit() async {
     String note = noteController.text;
     String date = selectedDate.toString().split(' ')[0];
 
     print("Note : $note\tDate: $date\nCustId: ${widget.itemId}");
 
+    LocationService service = LocationService();
+    Position? position = await service.getCurrentLocation();
+    String lat = 0.0.toString();
+    String lng = 0.0.toString();
 
-    apiService.addVisit(note, date, widget.itemId);
+    if (position != null) {
+      lat = position.latitude.toString();
+      lng = position.longitude.toString();
+      print('Current location: ${position.latitude}, ${position.longitude}');
+    }
+
+    var x = await apiService.addVisit(note, date, widget.itemId, lat, lng);
+    if(x) {
+      Fluttertoast.showToast(msg: "Visit added!");
+      if (mounted) Navigator.pop(context, true);
+    } else {
+      Fluttertoast.showToast(msg: "Failed to add visit!");
+    }
   }
 }

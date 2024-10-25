@@ -1,16 +1,20 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:salesboardapp/api_constants.dart';
 import 'package:salesboardapp/models/Attendance.dart';
+import 'package:salesboardapp/models/CartResponse.dart';
 import 'package:salesboardapp/models/Customer.dart';
+import 'package:salesboardapp/models/ProductResponse.dart';
 import 'package:salesboardapp/models/TargetResponse.dart';
 import 'package:salesboardapp/models/TourItem.dart';
 import 'package:salesboardapp/models/tour_response.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/Area.dart';
+import 'models/Common.dart';
 import 'models/ExpenseResponse.dart';
 import 'models/ExpenseType.dart';
 import 'models/MerchExpenseResponse.dart';
@@ -69,7 +73,7 @@ class ApiService {
     }
   }
 
-  Future<void> uploadImage(String filePath, String reading) async {
+  Future<Common?> uploadImage(String filePath, String reading, String lat, String lng, bool isDayIn) async {
     var request = http.MultipartRequest(
       'POST',
       Uri.parse(ApiConstants.markAttendanceEndPoint), // Your upload URL
@@ -83,24 +87,42 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId') ?? "0";
 
+    print("event - $isDayIn");
     request.fields['user_id'] = userId;
     request.fields['reading'] = reading;
-    request.fields['event'] = "in";
+    request.fields['event'] = isDayIn == true ? "in" : "out";
 
-    request.fields['start_lat'] = "200";
-    request.fields['start_lng'] = "200";
-    request.fields['address'] = "200";
+    request.fields['start_lat'] = lat;
+    request.fields['start_lng'] = lng;
+    request.fields['address'] = "-";
 
     var response = await request.send();
     if (response.statusCode == 200) {
-      print('Image uploaded successfully!');
-    } else {
-      print('Failed to upload image. Status code: ${response.statusCode}');
+      final jsonResponse = await http.Response.fromStream(response);
+      final Map<String, dynamic> jsonData = json.decode(jsonResponse.body);
+
+      if (jsonData['success'] == true) {
+        print('Image uploaded successfully1!');
+        Common obj = Common(
+            success: jsonData['success'], message: jsonData['message']);
+        return obj;
+      } else {
+        print('Failed to upload image. - ${jsonData['message']}');
+        Common obj = Common(
+            success: jsonData['success'], message: jsonData['message']);
+        return obj;
+      }
     }
+    return null;
+
+    // } else {
+    //   print('Failed to upload image. Status code: ${response.statusCode}');
+    //   return false;
+    // }
   }
 
-  Future<void> addFarmer(String areaId, String routeId, String type, String farmer, String contact,
-      String village, String otherInfo, String note) async {
+  Future<bool> addFarmer(String areaId, String routeId, String type, String farmer, String contact,
+      String village, String otherInfo, String note, String lat, String lng) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
@@ -116,6 +138,8 @@ class ApiService {
       'area': areaId,
       'route': routeId,
       'state': "1",
+      "lat": lat,
+      "lng": lng
     };
 
     final response = await http.post(Uri.parse(ApiConstants.addFarmerEndPoint),
@@ -125,9 +149,15 @@ class ApiService {
         body: body);
 
     if (response.statusCode == 200) {
-      print(response.body);
+      final jsonResponse = json.decode(response.body);
+      if(jsonResponse['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       print('Failed to upload image. Status code: ${response.statusCode}');
+      return false;
     }
   }
 
@@ -175,7 +205,7 @@ class ApiService {
     }
   }
 
-  Future<void> addVisit(String note, String date, String custId) async {
+  Future<bool> addVisit(String note, String date, String custId, String lat, String lng) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
@@ -186,6 +216,8 @@ class ApiService {
       'comment': note,
       'next_visit': date,
       'user_id': userId,
+      "lat": lat,
+      "lng": lng
     };
 
     final response = await http.post(Uri.parse(ApiConstants.addVisitEndPoint),
@@ -195,9 +227,15 @@ class ApiService {
         body: body);
 
     if (response.statusCode == 200) {
-      print(response.body);
+      final jsonResponse = json.decode(response.body);
+      if(jsonResponse['success'] == true) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       print('Failed to upload image. Status code: ${response.statusCode}');
+      return false;
     }
   }
 
@@ -515,6 +553,144 @@ class ApiService {
     } else {
       print('Failed to upload image. Status code: ${response.statusCode}');
       return [];
+    }
+  }
+
+  Future<String> fetchLoginStatus() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
+    final body = {
+      'user_id': userId,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.attendanceStatus),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+
+      if(jsonResponse['success'] == true) {
+        String x =  jsonResponse['status'];
+        return x;
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
+  }
+
+  Future<ProductResponse?> fetchProducts() async {
+
+    final response = await http.get(Uri.parse(
+        'http://salesboard.in/solufinephp/new/fetch_products.php'));
+
+    if (response.statusCode == 200) {
+      return ProductResponse.fromJson(json.decode(response.body));
+    } else {
+      return null;
+      // throw Exception('Failed to load areas');
+    }
+  }
+
+  Future<CartResponse?> addToCart(
+      String quantity, String pId, String custId, String cat, String dId, String isDist
+      ) async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
+    // print("quantity - $quantity");
+    // print("pId - $pId");
+    // print("custId - $custId");
+    // print("cat - $cat");
+    // print("dId - $dId");
+    // print("isDist - $isDist");
+
+
+    final body = {
+      'added_by': userId,
+      'quantity': quantity,
+      'prod_id': pId,
+      'cust_id': custId,
+      'category': cat,
+      'dist_id': dId,
+      'isDist': isDist,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.addToCartEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return CartResponse.fromJson(json.decode(response.body));
+    } else {
+      return null;
+      // throw Exception('Failed to load areas');
+    }
+  }
+
+  Future<CartResponse?> fetchCartItems(
+      String custId, String isDist
+      ) async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId');
+
+    // print("quantity - $quantity");
+    // print("pId - $pId");
+    // print("custId - $custId");
+    // print("cat - $cat");
+    // print("dId - $dId");
+    // print("isDist - $isDist");
+
+
+    final body = {
+      'user_id': userId,
+      'cust_id': custId,
+      'is_dist': isDist,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.cartItemsEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return CartResponse.fromJson(json.decode(response.body));
+    } else {
+      return null;
+      // throw Exception('Failed to load areas');
+    }
+  }
+
+  Future<Common?> addUser(String name, String contact, String uname, String pass) async {
+
+    final body = {
+      'name': name,
+      'contact': contact,
+      'uname': uname,
+      'pass': pass,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.addUserEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    if (response.statusCode == 200) {
+      return Common.fromJson(json.decode(response.body));
+    } else {
+      return null;
     }
   }
 }

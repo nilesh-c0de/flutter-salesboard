@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:salesboardapp/api_service.dart';
+import 'package:salesboardapp/pages/add_user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../api_constants.dart';
 import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,6 +23,49 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   final ApiService apiService = ApiService();
+  bool _isLoading = false;
+
+  checkLogin(String user, String pass) async {
+    final body = {
+      'username': user,
+      'userpass': pass,
+    };
+
+    final response = await http.post(Uri.parse(ApiConstants.loginEndPoint),
+        headers: <String, String>{
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body);
+
+    final jsonResponse = jsonDecode(response.body);
+    if (jsonResponse['status'] == "success") {
+      Fluttertoast.showToast(msg: "Login successfully!");
+
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('userId', jsonResponse['data']['userId']);
+      prefs.setString('name', jsonResponse['data']['name']);
+      prefs.setString('contact', jsonResponse['data']['contact']);
+      prefs.setBool('isActive', jsonResponse['data']['is_active']);
+      prefs.setString('type', jsonResponse['data']['type']);
+      prefs.setBool('isLoggedIn', true);
+
+      await Future.delayed(Duration(seconds: 3));
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MainScreen()),
+      );
+    } else {
+      Fluttertoast.showToast(msg: "Login failed!");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   void handleLogin(String username, String password) async {
     try {
@@ -95,21 +143,41 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(
                       height: 8.0,
                     ),
+                    _isLoading == true
+                        ? CircularProgressIndicator()
+                        : SizedBox(
+                            height: 48,
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                // foreground (text) color
+                                backgroundColor:
+                                    Colors.green, // background color
+                              ),
+                              onPressed: () => {
+
+                                setState(() {
+                                  _isLoading = true;
+                                }),
+                                checkLogin(_usernameController.text,
+                                    _passwordController.text)
+                              },
+                              child: const Text("SUBMIT"),
+                            ),
+                          ),
                     SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          // foreground (text) color
-                          backgroundColor: Colors.green, // background color
-                        ),
-                        onPressed: () => {
-                          handleLogin(_usernameController.text,
-                              _passwordController.text)
-                        },
-                        child: const Text("SUBMIT"),
-                      ),
+                      height: 20,
                     ),
+                    InkWell(
+                      child: Text("Sign Up!"),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AddUser()),
+                        );
+                      },
+                    )
                   ],
                 ),
               ),
