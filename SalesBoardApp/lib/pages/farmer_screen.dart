@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:salesboardapp/TabSideBar.dart';
 import 'package:salesboardapp/api_service.dart';
 import 'package:salesboardapp/models/Route.dart';
+import 'package:salesboardapp/pages/add_dealer_screen.dart';
 
 import '../models/Area.dart';
 import '../models/Customer.dart';
@@ -20,6 +24,8 @@ class FarmerScreen extends StatefulWidget {
 class _FarmerScreenState extends State<FarmerScreen> {
   ApiService apiService = ApiService();
   late Future<List<Customer>> custList;
+
+  bool isAddOptionShow = false;
 
   List<Area> areaList = [];
   List<MyRoute> routeList = [];
@@ -50,7 +56,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
   }
 
   Future<void> loadRoutes(String area, StateSetter setter) async {
-    print("selected area - $area");
+    log("selected area - $area");
 
     routeList = [];
     selectedRoute = null;
@@ -76,14 +82,13 @@ class _FarmerScreenState extends State<FarmerScreen> {
                   children: [
                     DropdownButton<Area>(
                       isExpanded: true,
-                      hint: Text('Select Area'),
+                      hint: const Text('Select Area'),
                       value: selectedArea,
                       onChanged: (Area? value) {
                         setter(() {
                           selectedArea = value;
                           if (value != null) {
-                            loadRoutes(value.areaId,
-                                setter); // Load routes based on selected area ID
+                            loadRoutes(value.areaId, setter); // Load routes based on selected area ID
                           }
                         });
                       },
@@ -95,15 +100,15 @@ class _FarmerScreenState extends State<FarmerScreen> {
                       }).toList(),
                     ),
                     routeList.isEmpty
-                        ? Text("No routes present!")
+                        ? const Text("No routes present!")
                         : DropdownButton<MyRoute>(
                             isExpanded: true,
-                            hint: Text('Select Route'),
+                            hint: const Text('Select Route'),
                             value: selectedRoute,
                             onChanged: (MyRoute? value) {
                               setter(() {
                                 selectedRoute = value;
-                                print("route - ${selectedRoute?.routeName}");
+                                log("route - ${selectedRoute?.routeName}");
                                 // _fetchCust(value?.routeId ?? "0");
                               });
                             },
@@ -111,8 +116,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                                 ? routeList.map((MyRoute route) {
                                     return DropdownMenuItem<MyRoute>(
                                       value: route,
-                                      child: Text(route
-                                          .routeName), // Display the route name
+                                      child: Text(route.routeName), // Display the route name
                                     );
                                   }).toList()
                                 : List.empty()),
@@ -127,7 +131,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -136,7 +140,7 @@ class _FarmerScreenState extends State<FarmerScreen> {
                 Navigator.of(context).pop();
                 _fetchCust(selectedRoute?.routeId ?? "0");
               },
-              child: Text('Confirm'),
+              child: const Text('Confirm'),
             ),
           ],
         );
@@ -146,115 +150,175 @@ class _FarmerScreenState extends State<FarmerScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isMobileDevice = false;
+
+    log("this is screen width $screenWidth");
+
+    if (screenWidth <= 768) {
+      setState(() {
+        isMobileDevice = true;
+      });
+    }
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Farmers"),
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Farmers"),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        var aId = selectedArea?.areaId ?? "0";
-        var rId = selectedRoute?.routeId ?? "0";
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AddFarmerScreen(areaId: aId, routeId: rId)),
-        );
-      },
-        child: const Icon(Icons.add),),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Expanded(
-            child: FutureBuilder<List<Customer>>(
-              future: custList,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No records found.'));
-                }
-                final farmerData = snapshot.data!;
-
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                    itemCount: farmerData.length,
-                    itemBuilder: (context, index) {
-                      final farmer = farmerData[index];
-
-                      return Padding(
-                        padding: const EdgeInsets.all(0),
-                        child: Slidable(
-                          endActionPane: ActionPane(
-                            motion: const ScrollMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed: (BuildContext context) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AddCart(itemId: farmer.custId,)),
-                                  );
-                                },
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                icon: Icons.add_shopping_cart,
-                                label: 'Order',
-                              ),
-                              SlidableAction(
-                                onPressed: (BuildContext context) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => AddVisit(itemId: farmer.custId)),
-                                  );
-                                },
-                                backgroundColor: Colors.deepOrange,
-                                foregroundColor: Colors.white,
-                                icon: Icons.handshake_outlined,
-                                label: 'Visit',
-                              ),
-                            ],
-                          ),
-                          child: Card(
-                            child: ListTile(
-                                title: Text("${farmer.custShopName}"),
-                                subtitle: Text("${farmer.custMobNo}")),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            color: Colors.black12,
-            width: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: InkWell(
-                onTap: _showAreaRouteDialog,
-                child: Text(
-                  'Route - ${selectedRoute?.routeName}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.indigo,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+          if (isAddOptionShow)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FloatingActionButton.extended(
+                heroTag: "af",
+                onPressed: () {
+                  var aId = selectedArea?.areaId ?? "0";
+                  var rId = selectedRoute?.routeId ?? "0";
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddFarmerScreen(areaId: aId, routeId: rId)),
+                  );
+                },
+                label: const Text("Add Farmer"),
               ),
             ),
+          if (isAddOptionShow)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: FloatingActionButton.extended(
+                heroTag: "ad",
+                onPressed: () {
+                  var aId = selectedArea?.areaId ?? "0";
+                  var rId = selectedRoute?.routeId ?? "0";
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddDealerScreen(areaId: aId, routeId: rId)),
+                  );
+                },
+                label: const Text("Add Dealer"),
+              ),
+            ),
+          FloatingActionButton(
+            heroTag: "a",
+            onPressed: () {
+              setState(() {
+                isAddOptionShow = !isAddOptionShow;
+              });
+            },
+            child: const Icon(Icons.add),
           ),
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            if (!isMobileDevice) SizedBox(width: screenWidth / 3.5, child: drawerUi(context)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: FutureBuilder<List<Customer>>(
+                      future: custList,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Center(child: Text('No records found.'));
+                        }
+                        final farmerData = snapshot.data!;
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ListView.builder(
+                            itemCount: farmerData.length,
+                            itemBuilder: (context, index) {
+                              final farmer = farmerData[index];
+                              return Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: Slidable(
+                                  endActionPane: ActionPane(
+                                    motion: const ScrollMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (BuildContext context) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => AddCart(
+                                                      itemId: farmer.custId,
+                                                    )),
+                                          );
+                                        },
+                                        backgroundColor: Colors.blue,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.add_shopping_cart,
+                                        label: 'Order',
+                                      ),
+                                      SlidableAction(
+                                        onPressed: (BuildContext context) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => AddVisit(itemId: farmer.custId)),
+                                          );
+                                        },
+                                        backgroundColor: Colors.deepOrange,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.handshake_outlined,
+                                        label: 'Visit',
+                                      ),
+                                    ],
+                                  ),
+                                  child: Card(
+                                    child: ListTile(title: Text(farmer.custShopName), subtitle: Text(farmer.custMobNo)),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Container(
+                    color: Colors.black12,
+                    width: double.infinity,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: InkWell(
+                        onTap: _showAreaRouteDialog,
+                        child: Text(
+                          'Route - ${selectedRoute?.routeName}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.indigo,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   _fetchCust(String routeId) {
-    print("selected route - $routeId");
+    log("selected route - $routeId");
     custList = apiService.fetchCustomers(routeId);
     setState(() {});
   }

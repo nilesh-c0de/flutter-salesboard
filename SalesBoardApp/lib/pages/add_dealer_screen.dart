@@ -29,8 +29,8 @@ class _AddDealerScreenState extends State<AddDealerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Dealer"),
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Add Dealer"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -46,74 +46,74 @@ class _AddDealerScreenState extends State<AddDealerScreen> {
                       decoration: const InputDecoration(
                           hintText: "Company", border: OutlineInputBorder()),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: _ownerController,
                       decoration: const InputDecoration(
                           hintText: "Owner", border: OutlineInputBorder()),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     TextFormField(
                       keyboardType: TextInputType.number,
                       controller: _mobileController,
                       decoration: const InputDecoration(
                           hintText: "Contact", border: OutlineInputBorder()),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: _keeperController,
                       decoration: const InputDecoration(
                           hintText: "Keeper", border: OutlineInputBorder()),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     TextFormField(
                       keyboardType: TextInputType.number,
                       controller: _keeperMobileController,
                       decoration: const InputDecoration(
                           hintText: "Keeper Contact", border: OutlineInputBorder()),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: _gstController,
                       decoration: const InputDecoration(
                           hintText: "GST No.", border: OutlineInputBorder()),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: _panController,
                       decoration: const InputDecoration(
                           hintText: "PAN No.", border: OutlineInputBorder()),
                     ),
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     SizedBox(
                       width: double.infinity,
                       height: 48,
                       child: ElevatedButton(onPressed: () {
                         _addDealer();
-                      }, child: Text("SUBMIT")),
+                      }, child: const Text("SUBMIT")),
                     ),
         
         
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 8),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => AddFarmerScreen(areaId: widget.areaId, routeId: widget.routeId)),
-                    );
-                  }, child: Text("ADD FARMER")),
-                ),
-              )
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 8),
+              //   child: SizedBox(
+              //     width: double.infinity,
+              //     height: 48,
+              //     child: ElevatedButton(onPressed: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(builder: (context) => AddFarmerScreen(areaId: widget.areaId, routeId: widget.routeId)),
+              //       );
+              //     }, child: const Text("ADD FARMER")),
+              //   ),
+              // )
             ]
         ),
       ),

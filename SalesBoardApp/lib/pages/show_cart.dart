@@ -39,8 +39,8 @@ class _ShowCartState extends State<ShowCart> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Cart Items"),
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Cart Items"),
       ),
       body: ListView.builder(
         itemCount: cartList.length,

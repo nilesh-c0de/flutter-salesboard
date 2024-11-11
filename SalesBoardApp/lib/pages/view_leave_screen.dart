@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:salesboardapp/TabSideBar.dart';
 import 'package:salesboardapp/api_constants.dart';
 import 'package:salesboardapp/pages/add_leave_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,8 +28,7 @@ class _ViewLeaveScreenState extends State<ViewLeaveScreen> {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
-    final response = await http.post(Uri.parse(ApiConstants.getLeaveEndPoint),
-        body: {"user_id": userId});
+    final response = await http.post(Uri.parse(ApiConstants.getLeaveEndPoint), body: {"user_id": userId});
 
     if (200 == response.statusCode) {
       try {
@@ -60,81 +60,83 @@ class _ViewLeaveScreenState extends State<ViewLeaveScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Leaves"),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddLeaveScreen()))
-              .then((value) => value != null ? getLeave() : false),
-          child: const Icon(Icons.add),
-        ),
-        body: list.isNotEmpty
-            ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListView.builder(
-                    itemCount: list.length,
-                    itemBuilder: (listContext, index) {
-                      Leaves item = list.elementAt(index);
-                      return Card(
-                        child: ListTile(
-                          title: Text(
-                            "${item.reason}".toUpperCase(),
-                            style: TextStyle(fontSize: 18, color: Colors.indigo),
-                          ),
-                          subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isMobileDevice = false;
+
+    if (screenWidth <= 768) {
+      setState(() {
+        isMobileDevice = true;
+      });
+    }
+    return Scaffold(
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Leaves"),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddLeaveScreen())).then((value) => value != null ? getLeave() : false),
+        child: const Icon(Icons.add),
+      ),
+      body: Row(
+        children: [
+          if (!isMobileDevice) SizedBox(width: screenWidth / 3.5, child: drawerUi(context)),
+          Expanded(
+            child: list.isNotEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                        itemCount: list.length,
+                        itemBuilder: (listContext, index) {
+                          Leaves item = list.elementAt(index);
+                          return Card(
+                            child: ListTile(
+                              title: Text(
+                                "${item.reason}".toUpperCase(),
+                                style: const TextStyle(fontSize: 18, color: Colors.indigo),
+                              ),
+                              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Container(
-                                    child: Text(
-                                      "From - ${item.fromDate}",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
+                                  child: Text(
+                                    "From - ${item.fromDate}",
+                                    style: const TextStyle(fontSize: 16),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Container(
-                                    child: Text(
-                                      "To - ${item.toDate}",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
+                                  child: Text(
+                                    "To - ${item.toDate}",
+                                    style: const TextStyle(fontSize: 16),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Container(
-                                    child: Text(
-                                      "Status - ${item.leaveStatus}",
-                                      style: TextStyle(fontSize: 16),
-                                    ),
+                                  child: Text(
+                                    "Status - ${item.leaveStatus}",
+                                    style: const TextStyle(fontSize: 16),
                                   ),
                                 ),
                               ]),
-                          // subtitle: Text("From: ${item.fromDate}"
-                          //     "\nTo: ${item.toDate}"
-                          //     "\nStatus: ${item.leaveStatus}"),
-                          onTap: () {
-                            Fluttertoast.showToast(msg: "${item.reason}");
-                          },
-                        ),
-                      );
-                    }),
-              )
-            : Center(
-                child: noData
-                    ? Text(
-                        "No leaves found!",
-                        style: Theme.of(context).textTheme.titleLarge,
-                      )
-                    : const CircularProgressIndicator(),
-              ),
+                              // subtitle: Text("From: ${item.fromDate}"
+                              //     "\nTo: ${item.toDate}"
+                              //     "\nStatus: ${item.leaveStatus}"),
+                              onTap: () {
+                                Fluttertoast.showToast(msg: "${item.reason}");
+                              },
+                            ),
+                          );
+                        }),
+                  )
+                : Center(
+                    child: noData
+                        ? Text(
+                            "No leaves found!",
+                            style: Theme.of(context).textTheme.titleLarge,
+                          )
+                        : const CircularProgressIndicator(),
+                  ),
+          ),
+        ],
       ),
     );
   }
@@ -179,15 +181,7 @@ class Leaves {
   String? leaveUserId;
   String? leaveStatus;
 
-  Leaves(
-      {this.alsId,
-      this.name,
-      this.noDay,
-      this.reason,
-      this.fromDate,
-      this.toDate,
-      this.leaveUserId,
-      this.leaveStatus});
+  Leaves({this.alsId, this.name, this.noDay, this.reason, this.fromDate, this.toDate, this.leaveUserId, this.leaveStatus});
 
   Leaves.fromJson(Map<String, dynamic> json) {
     alsId = json['als_id'];

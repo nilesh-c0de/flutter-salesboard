@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:salesboardapp/TabSideBar.dart';
 import 'package:salesboardapp/pages/add_prob_screen.dart';
 import 'package:http/http.dart' as http;
 import '../api_constants.dart';
@@ -55,74 +56,85 @@ class _ViewProbScreenState extends State<ViewProbScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Probables"),
-        ),
-        body: list.isNotEmpty
-            ? ListView.builder(
-                itemCount: list.length,
-                itemBuilder: (context, index) {
-                  ProbData item = list.elementAt(index);
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: ListTile(
-                          title: Text("${item.shop}".toUpperCase(), style:
-                            TextStyle(
-                              fontSize: 18,
-                              color: Colors.indigo
-                            ),),
-                          subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isMobileDevice = false;
+
+    if (screenWidth <= 768) {
+      setState(() {
+        isMobileDevice = true;
+      });
+    }
+
+    return Scaffold(
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Probables"),
+      ),
+      body: Row(
+        children: [
+          if (!isMobileDevice) SizedBox(width: screenWidth / 3.5, child: drawerUi(context)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: list.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        ProbData item = list.elementAt(index);
+                        return Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: ListTile(
+                              title: Text(
+                                "${item.shop}".toUpperCase(),
+                                style: const TextStyle(fontSize: 18, color: Colors.indigo),
+                              ),
+                              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Container(child: Text("${item.owner} (${item.mobile})", style: TextStyle(
-                                      fontSize: 18
-                                  ),),),
+                                  child: Text(
+                                    "${item.owner} (${item.mobile})",
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Container(child: Text("${item.date}", style: TextStyle(
-                                      fontSize: 18
-                                  ),),),
+                                  child: Text(
+                                    "${item.date}",
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Container(child: Text("${item.type}", style: TextStyle(
-                                      fontSize: 18
-                                  ),),),
+                                  child: Text(
+                                    "${item.type}",
+                                    style: const TextStyle(fontSize: 18),
+                                  ),
                                 ),
-                              ]
+                              ]),
+                              onTap: () {
+                                Fluttertoast.showToast(msg: "${item.address}");
+                              },
+                            ),
                           ),
-                          onTap: () {
-                            Fluttertoast.showToast(msg: "${item.address}");
-                          },
-                        ),
-                      ),
+                        );
+                      })
+                  : Center(
+                      child: noData
+                          ? Text(
+                              "No Record Found",
+                              style: Theme.of(context).textTheme.labelLarge,
+                            )
+                          : const CircularProgressIndicator(),
                     ),
-                  );
-                })
-            : Center(
-                child: noData
-                    ? Text(
-                        "No Record Found",
-                        style: Theme.of(context).textTheme.labelLarge,
-                      )
-                    : const CircularProgressIndicator(),
-              ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AddProbScreen()))
-              .then((value) => value != null ? getProb() : false),
-          child: const Icon(Icons.add),
-        ),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddProbScreen())).then((value) => value != null ? getProb() : false),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -168,16 +180,7 @@ class ProbData {
   String? type;
   String? date;
 
-  ProbData(
-      {this.probId,
-      this.shop,
-      this.owner,
-      this.mobile,
-      this.email,
-      this.address,
-      this.user,
-      this.type,
-      this.date});
+  ProbData({this.probId, this.shop, this.owner, this.mobile, this.email, this.address, this.user, this.type, this.date});
 
   ProbData.fromJson(Map<String, dynamic> json) {
     probId = json['prob_id'];

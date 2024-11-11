@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:salesboardapp/api_service.dart';
+import 'package:salesboardapp/models/Common.dart';
 import 'package:salesboardapp/pages/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,9 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Container(
           width: MediaQuery.of(context).size.width / 1.1,
           height: MediaQuery.of(context).size.height / 2.5,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              border: Border.all(color: Colors.teal[200]!)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), border: Border.all(color: Colors.teal[200]!)),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -45,19 +45,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   onPressed: () {
-
                     logOut();
-
                   },
                   child: const Text("Log Out"),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  onPressed: () {
-
+                  onPressed: () async {
                     Fluttertoast.showToast(msg: "Account deleted!");
-                    logOut();
-
+                    ApiService apiService = ApiService();
+                    Common? result = await apiService.deleteUser();
+                    if (result != null) {
+                      if (result.success == true) {
+                        logOut();
+                      } else {
+                        Fluttertoast.showToast(msg: "Failed to delete account! please try again");
+                      }
+                    }
                   },
                   child: const Text("Delete Account"),
                 ),
@@ -70,9 +74,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> logOut() async {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.clear(); // This clears all the preferences
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const LoginScreen()));
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // This clears all the preferences
+    if (mounted) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+    }
   }
 }

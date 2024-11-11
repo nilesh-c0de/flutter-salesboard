@@ -24,7 +24,7 @@ class _MyDropdownState extends State<MyDropdown> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Dropdown Example')),
+      appBar: AppBar(centerTitle: false,title: const Text('Dropdown Example')),
       body: Center(
         child: DropdownButton<String>(
           isExpanded: true,

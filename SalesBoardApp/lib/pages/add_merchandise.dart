@@ -35,8 +35,8 @@ class _AddMerchandiseState extends State<AddMerchandise> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Merchandise"),
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Add Merchandise"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -51,8 +51,8 @@ class _AddMerchandiseState extends State<AddMerchandise> {
                 // Optional: you can specify the border radius
                 borderRadius: BorderRadius.circular(3), // Rounded corners
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
                 // child: DropdownButton(
                 //   isExpanded: true,
                 //   value: typeObj,
@@ -69,7 +69,7 @@ class _AddMerchandiseState extends State<AddMerchandise> {
                 // ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             InkWell(
@@ -90,7 +90,7 @@ class _AddMerchandiseState extends State<AddMerchandise> {
                 _selectDate(context);
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             TextFormField(
@@ -99,14 +99,14 @@ class _AddMerchandiseState extends State<AddMerchandise> {
               decoration: const InputDecoration(
                   hintText: "Quantity", border: OutlineInputBorder()),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             SizedBox(width: double.infinity,
                 height: 48,
                 child: ElevatedButton(onPressed: () {
                   // _addExpense();
-                }, child: Text("Submit")))
+                }, child: const Text("Submit")))
           ],
         ),
       ),

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:salesboardapp/pages/onboarding_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,48 +13,47 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     check();
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator()
-      ),
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 
   Future<void> check() async {
-
     final prefs = await SharedPreferences.getInstance();
 
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
-    if(prefs.containsKey("first_time")) {
-      if(prefs.containsKey("isLoggedIn")) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MainScreen()),
-        );
+    if (prefs.containsKey("first_time")) {
+      if (prefs.containsKey("isLoggedIn")) {
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScreen()),
+          );
+        }
       } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-        );
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
       }
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => OnboardingScreen()),
-      );
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        );
+      }
     }
   }
 }
-
