@@ -13,9 +13,7 @@ class CartResponse {
     return CartResponse(
       success: json['success'],
       message: json['message'],
-      result: (json['result'] as List)
-          .map((item) => CartResult.fromJson(item))
-          .toList(),
+      result: (json['result'] as List).map((item) => CartResult.fromJson(item)).toList(),
     );
   }
 }

@@ -49,16 +49,15 @@ class _LoginScreenState extends State<LoginScreen> {
       prefs.setString('type', jsonResponse['data']['type']);
       prefs.setBool('isLoggedIn', true);
 
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 3));
 
       setState(() {
         _isLoading = false;
       });
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
-      );
+      if (mounted) {
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const MainScreen()), (route) => false);
+      }
     } else {
       Fluttertoast.showToast(msg: "Login failed!");
       setState(() {
@@ -87,10 +86,12 @@ class _LoginScreenState extends State<LoginScreen> {
       prefs.setString('type', type);
       prefs.setBool('isLoggedIn', true);
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => MainScreen()),
-      );
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScreen()),
+        );
+      }
     } catch (error) {
       if (kDebugMode) {
         print(error);
@@ -100,6 +101,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isMobileDevice = false;
+    if (screenWidth >= 376 && screenWidth <= 768) {
+      isMobileDevice = true;
+    }
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: false,
@@ -109,76 +117,64 @@ class _LoginScreenState extends State<LoginScreen> {
           leadingWidth: 0.0,
         ),
         body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 5.0,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "Salesboard",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontStyle: FontStyle.normal,
-                          color: Colors.grey,
-                        ),
+          child: SingleChildScrollView(
+            child: SizedBox(
+              width: !isMobileDevice ? (screenWidth / 1.2) : screenWidth,
+              child: Card(
+                elevation: 5.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    TextFormField(
-                      controller: _usernameController,
-                      decoration: const InputDecoration(
-                          hintText: "Username", border: OutlineInputBorder()),
-                    ),
-                    const SizedBox(height: 8.0),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: const InputDecoration(
-                          hintText: "Password", border: OutlineInputBorder()),
-                    ),
-                    const SizedBox(
-                      height: 8.0,
-                    ),
-                    _isLoading == true
-                        ? CircularProgressIndicator()
-                        : SizedBox(
-                            height: 48,
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                // foreground (text) color
-                                backgroundColor:
-                                    Colors.green, // background color
+                      TextFormField(
+                        controller: _usernameController,
+                        textInputAction: TextInputAction.next,
+                        decoration: const InputDecoration(hintText: "Username", border: OutlineInputBorder()),
+                      ),
+                      const SizedBox(height: 8.0),
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        textInputAction: TextInputAction.done,
+                        decoration: const InputDecoration(hintText: "Password", border: OutlineInputBorder()),
+                      ),
+                      const SizedBox(
+                        height: 8.0,
+                      ),
+                      _isLoading == true
+                          ? const CircularProgressIndicator()
+                          : SizedBox(
+                              height: 48,
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.green,
+                                ),
+                                onPressed: () => {
+                                  setState(() {
+                                    _isLoading = true;
+                                  }),
+                                  checkLogin(_usernameController.text, _passwordController.text)
+                                },
+                                child: const Text("SUBMIT"),
                               ),
-                              onPressed: () => {
-
-                                setState(() {
-                                  _isLoading = true;
-                                }),
-                                checkLogin(_usernameController.text,
-                                    _passwordController.text)
-                              },
-                              child: const Text("SUBMIT"),
                             ),
-                          ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InkWell(
-                      child: Text("Sign Up!"),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AddUser()),
-                        );
-                      },
-                    )
-                  ],
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      InkWell(
+                        child: const Text("Don't Have Account? Sign Up!"),
+                        onTap: () {
+                          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const AddUser()), (route) => true);
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

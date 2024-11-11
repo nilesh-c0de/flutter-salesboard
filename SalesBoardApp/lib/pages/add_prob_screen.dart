@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:salesboardapp/TabSideBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api_constants.dart';
 
@@ -20,8 +21,7 @@ class _AddProbScreenState extends State<AddProbScreen> {
   final TextEditingController mobileControl = TextEditingController();
   final TextEditingController emailControl = TextEditingController();
   Probs selectedType = Probs(probId: "0", probName: "Select Prob");
-  String address =
-      "RMG4+8PW, Dindi Ves, Miraj, Sangli Miraj Kupwad, Maharashtra 416410, India";
+  String address = "RMG4+8PW, Dindi Ves, Miraj, Sangli Miraj Kupwad, Maharashtra 416410, India";
   String latitude = "16.8258321";
   String longitude = "74.656684";
   List<Probs> listProb = [];
@@ -33,8 +33,7 @@ class _AddProbScreenState extends State<AddProbScreen> {
   }
 
   Future<void> getTypes() async {
-    final response =
-        await http.get(Uri.parse(ApiConstants.getProbTypeEndPoint));
+    final response = await http.get(Uri.parse(ApiConstants.getProbTypeEndPoint));
 
     if (200 == response.statusCode) {
       try {
@@ -59,35 +58,40 @@ class _AddProbScreenState extends State<AddProbScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Add Probables"),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Form(
-              key: addKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey, // Border color
-                        width: 1, // Border width
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isMobileDevice = false;
+
+    if (screenWidth <= 768) {
+      setState(() {
+        isMobileDevice = true;
+      });
+    }
+
+    return Scaffold(
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Add Probables"),
+      ),
+      body: SingleChildScrollView(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!isMobileDevice) SizedBox(width: screenWidth / 3.5, child: drawerUi(context)),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Form(
+                  key: addKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        height: 16,
                       ),
-                      // Optional: you can specify the border radius
-                      borderRadius: BorderRadius.circular(3), // Rounded corners
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: DropdownButton<Probs>(
+                      DropdownButtonFormField<Probs>(
+                        decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: const BorderSide(width: 1, color: Colors.grey))),
                         isExpanded: true,
                         hint: const Text('Select Type'),
                         value: selectedType,
@@ -103,115 +107,102 @@ class _AddProbScreenState extends State<AddProbScreen> {
                           );
                         }).toList(),
                       ),
-                    ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.toString().trim().isEmpty) {
+                            return "Please Enter Shop Name";
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                            hintText: "Enter Shop Name", border: OutlineInputBorder(), labelText: "Shop Name", focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 2))),
+                        textInputAction: TextInputAction.next,
+                        controller: shopControl,
+                        keyboardType: TextInputType.text,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.toString().trim().isEmpty) {
+                            return "Please Enter Owner Name";
+                          }
+                          return null;
+                        },
+                        onTap: () {},
+                        decoration: const InputDecoration(
+                            hintText: "Enter Owner Name", border: OutlineInputBorder(), labelText: "Owner Name", focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 2))),
+                        textInputAction: TextInputAction.next,
+                        controller: ownerControl,
+                        keyboardType: TextInputType.text,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.toString().trim().isEmpty) {
+                            return "Please Enter Mobile Number";
+                          }
+                          return null;
+                        },
+                        onTap: () {},
+                        decoration: const InputDecoration(
+                            hintText: "Enter Mobile Number", border: OutlineInputBorder(), labelText: "Mobile Number", focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 2))),
+                        textInputAction: TextInputAction.next,
+                        controller: mobileControl,
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.toString().trim().isEmpty) {
+                            return "Please Enter Email Id";
+                          }
+                          return null;
+                        },
+                        onTap: () {},
+                        decoration:
+                            const InputDecoration(hintText: "Enter Email Id", border: OutlineInputBorder(), labelText: "Email Id", focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 2))),
+                        textInputAction: TextInputAction.next,
+                        controller: emailControl,
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        address,
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              if (address.isNotEmpty && addKey.currentState!.validate()) {
+                                addProb();
+                              } else {
+                                Fluttertoast.showToast(msg: "Enter All Details");
+                              }
+                            },
+                            child: const Text("Submit")),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.toString().trim().isEmpty) {
-                        return "Please Enter Shop Name";
-                      }
-                      return null;
-                    },
-                    decoration: const InputDecoration(
-                        hintText: "Enter Shop Name",
-                        border: OutlineInputBorder(),
-                        labelText: "Shop Name",
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2))),
-                    textInputAction: TextInputAction.next,
-                    controller: shopControl,
-                    keyboardType: TextInputType.text,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.toString().trim().isEmpty) {
-                        return "Please Enter Owner Name";
-                      }
-                      return null;
-                    },
-                    onTap: () {},
-                    decoration: const InputDecoration(
-                        hintText: "Enter Owner Name",
-                        border: OutlineInputBorder(),
-                        labelText: "Owner Name",
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2))),
-                    textInputAction: TextInputAction.next,
-                    controller: ownerControl,
-                    keyboardType: TextInputType.text,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.toString().trim().isEmpty) {
-                        return "Please Enter Mobile Number";
-                      }
-                      return null;
-                    },
-                    onTap: () {},
-                    decoration: const InputDecoration(
-                        hintText: "Enter Mobile Number",
-                        border: OutlineInputBorder(),
-                        labelText: "Mobile Number",
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2))),
-                    textInputAction: TextInputAction.next,
-                    controller: mobileControl,
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.toString().trim().isEmpty) {
-                        return "Please Enter Email Id";
-                      }
-                      return null;
-                    },
-                    onTap: () {},
-                    decoration: const InputDecoration(
-                        hintText: "Enter Email Id",
-                        border: OutlineInputBorder(),
-                        labelText: "Email Id",
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2))),
-                    textInputAction: TextInputAction.next,
-                    controller: emailControl,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    address,
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        if (address.isNotEmpty &&
-                            addKey.currentState!.validate()) {
-                          addProb();
-                        } else {
-                          Fluttertoast.showToast(msg: "Enter All Details");
-                        }
-                      },
-                      child: const Text("Submit")),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -221,8 +212,7 @@ class _AddProbScreenState extends State<AddProbScreen> {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
-    final response =
-        await http.post(Uri.parse(ApiConstants.addProbEndPoint), body: {
+    final response = await http.post(Uri.parse(ApiConstants.addProbEndPoint), body: {
       "user": userId,
       "lat": latitude.trim(),
       "lng": longitude.trim(),

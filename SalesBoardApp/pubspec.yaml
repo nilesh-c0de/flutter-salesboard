@@ -39,6 +39,8 @@ dependencies:
   flutter_slidable: ^3.1.1
   url_launcher: ^6.3.1
   geolocator: ^9.0.0
+  geocoding: ^2.1.0
+  fl_chart: ^0.66.0
 
 
   # The following adds the Cupertino Icons font to your application.

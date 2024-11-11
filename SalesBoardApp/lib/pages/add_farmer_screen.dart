@@ -30,8 +30,8 @@ class _AddFarmerScreenState extends State<AddFarmerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Farmer"),
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Add Farmer"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -47,67 +47,67 @@ class _AddFarmerScreenState extends State<AddFarmerScreen> {
                     decoration: const InputDecoration(
                         hintText: "Farmer", border: OutlineInputBorder()),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   TextFormField(
                     keyboardType: TextInputType.number,
                     controller: _contactController,
                     decoration: const InputDecoration(
                         hintText: "Contact", border: OutlineInputBorder()),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   TextFormField(
                     keyboardType: TextInputType.text,
                     controller: _districtController,
                     decoration: const InputDecoration(
                         hintText: "District", border: OutlineInputBorder()),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   TextFormField(
                     keyboardType: TextInputType.text,
                     controller: _villageController,
                     decoration: const InputDecoration(
                         hintText: "City/Village", border: OutlineInputBorder()),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   TextFormField(
                     keyboardType: TextInputType.text,
                     controller: _otherInfoController,
                     decoration: const InputDecoration(
                         hintText: "Other Information", border: OutlineInputBorder()),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   TextFormField(
                     keyboardType: TextInputType.text,
                     controller: _noteController,
                     decoration: const InputDecoration(
                         hintText: "Note", border: OutlineInputBorder()),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   SizedBox(
                     width: double.infinity,
                     height: 48,
                     child: ElevatedButton(onPressed: () {
                       _addFarmer();
-                    }, child: Text("SUBMIT")),
+                    }, child: const Text("SUBMIT")),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
         
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 8),
-              child: SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddDealerScreen(areaId: widget.areaId, routeId: widget.routeId,)),
-                  );
-                }, child: Text("ADD DEALER")),
-              ),
-            )
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 8),
+            //   child: SizedBox(
+            //     width: double.infinity,
+            //     height: 48,
+            //     child: ElevatedButton(onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(builder: (context) => AddDealerScreen(areaId: widget.areaId, routeId: widget.routeId,)),
+            //       );
+            //     }, child: const Text("ADD DEALER")),
+            //   ),
+            // )
           ]
         ),
       ),

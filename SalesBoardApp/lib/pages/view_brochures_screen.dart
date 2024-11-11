@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:salesboardapp/TabSideBar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../api_constants.dart';
@@ -25,8 +26,7 @@ class _ViewBrochuresScreenState extends State<ViewBrochuresScreen> {
   }
 
   Future<void> getBrochure() async {
-    final response =
-        await http.get(Uri.parse(ApiConstants.getBrochureEndPoint));
+    final response = await http.get(Uri.parse(ApiConstants.getBrochureEndPoint));
 
     if (200 == response.statusCode) {
       try {
@@ -58,35 +58,53 @@ class _ViewBrochuresScreenState extends State<ViewBrochuresScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Brochures"),
-        ),
-        body: list.isNotEmpty
-            ? ListView.builder(
-                itemCount: list.length,
-                itemBuilder: (context, index) {
-                  Brochures item = list.elementAt(index);
-                  return Card(
-                    child: ListTile(
-                      title: Text(" ${item.note}"),
-                      trailing: IconButton(
-                          onPressed: () {
-                            _launchUrl(item.file ?? "https://www.google.com");
-                          },
-                          icon: const Icon(Icons.remove_red_eye)),
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isMobileDevice = false;
+
+    if (screenWidth <= 768) {
+      setState(() {
+        isMobileDevice = true;
+      });
+    }
+
+    return Scaffold(
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Brochures"),
+      ),
+      body: Row(
+        children: [
+          if (!isMobileDevice) SizedBox(width: screenWidth / 3.5, child: drawerUi(context)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: list.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        Brochures item = list.elementAt(index);
+                        return Card(
+                          child: ListTile(
+                            title: Text(" ${item.note}"),
+                            trailing: IconButton(
+                                onPressed: () {
+                                  _launchUrl(item.file ?? "https://www.google.com");
+                                },
+                                icon: const Icon(Icons.remove_red_eye)),
+                          ),
+                        );
+                      })
+                  : Center(
+                      child: noData
+                          ? Text(
+                              "No Brochures Found",
+                              style: Theme.of(context).textTheme.labelLarge,
+                            )
+                          : const CircularProgressIndicator(),
                     ),
-                  );
-                })
-            : Center(
-                child: noData
-                    ? Text(
-                        "No Brochures Found",
-                        style: Theme.of(context).textTheme.labelLarge,
-                      )
-                    : const CircularProgressIndicator(),
-              ),
+            ),
+          ),
+        ],
       ),
     );
   }

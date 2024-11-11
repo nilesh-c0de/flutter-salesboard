@@ -41,8 +41,8 @@ class _AddVisitState extends State<AddVisit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Visit"),
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Add Visit"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

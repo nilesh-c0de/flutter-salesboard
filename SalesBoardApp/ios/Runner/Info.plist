@@ -50,6 +50,8 @@
     <string>We need to access your camera to take pictures.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>We need to access your photo library to upload pictures.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need to access location to mark user attendance with their location.</string>
 
 </dict>
 </plist>

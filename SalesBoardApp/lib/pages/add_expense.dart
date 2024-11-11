@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:salesboardapp/TabSideBar.dart';
 import 'package:salesboardapp/models/ExpenseType.dart';
 
 import '../api_service.dart';
@@ -61,92 +62,91 @@ class _AddExpenseState extends State<AddExpense> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isMobileDevice = false;
+
+    if (screenWidth <= 768) {
+      setState(() {
+        isMobileDevice = true;
+      });
+    }
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add Expense"),
+      appBar: AppBar(centerTitle: false,
+        title: const Text("Add Expense"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey, // Border color
-                  width: 1, // Border width
-                ),
-                // Optional: you can specify the border radius
-                borderRadius: BorderRadius.circular(3), // Rounded corners
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButton(
-                  isExpanded: true,
-                  value: typeObj,
-                  onChanged: (ExpenseType? value) {
-                    typeObj = value;
-                    setState(() {});
-                  },
-                  items: typeList.map((ExpenseType type) {
-                    return DropdownMenuItem<ExpenseType>(
-                      value: type,
-                      child: Text(type.stateName), // Display the area name
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            InkWell(
-              child: AbsorbPointer(
-                child: TextFormField(
-                  controller: dateController,
-                  decoration: InputDecoration(
-                    labelText: selectedDate == null
-                        ? 'Date'
-                        : 'Selected date: ${selectedDate!.toLocal()}'
-                            .split(' ')[2],
-                    hintText: "Follow Up Date",
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              onTap: () {
-                _selectDate(context);
-              },
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: amountController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                  hintText: "Amount", border: OutlineInputBorder()),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: noteController,
-              decoration: const InputDecoration(
-                  hintText: "Note", border: OutlineInputBorder()),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                    onPressed: () {
-                      _addExpense();
+      body: Row(
+        children: [
+          if (!isMobileDevice) SizedBox(width: screenWidth / 3.5, child: drawerUi(context)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  DropdownButtonFormField(
+                    decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(5), borderSide: const BorderSide(width: 1, color: Colors.grey))),
+                    isExpanded: true,
+                    value: typeObj,
+                    onChanged: (ExpenseType? value) {
+                      typeObj = value;
+                      setState(() {});
                     },
-                    child: Text("Submit")))
-          ],
-        ),
+                    items: typeList.map((ExpenseType type) {
+                      return DropdownMenuItem<ExpenseType>(
+                        value: type,
+                        child: Text(type.stateName), // Display the area name
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  InkWell(
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        controller: dateController,
+                        decoration: InputDecoration(
+                          labelText: selectedDate == null ? 'Date' : 'Selected date: ${selectedDate!.toLocal()}'.split(' ')[2],
+                          hintText: "Follow Up Date",
+                          border: const OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      _selectDate(context);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: amountController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(hintText: "Amount", border: OutlineInputBorder()),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    controller: noteController,
+                    decoration: const InputDecoration(hintText: "Note", border: OutlineInputBorder()),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _addExpense();
+                          },
+                          child: const Text("Submit")))
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

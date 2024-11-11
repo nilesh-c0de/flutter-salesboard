@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:salesboardapp/TabSideBar.dart';
 import 'package:salesboardapp/api_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models/Visit.dart';
 
 class VisitsScreen extends StatefulWidget {
@@ -13,7 +11,6 @@ class VisitsScreen extends StatefulWidget {
 }
 
 class _VisitsScreenState extends State<VisitsScreen> {
-
   ApiService apiService = ApiService();
 
   late Future<List<Visit>> userVisitList;
@@ -27,69 +24,84 @@ class _VisitsScreenState extends State<VisitsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    bool isMobileDevice = false;
+
+    if (screenWidth <= 768) {
+      setState(() {
+        isMobileDevice = true;
+      });
+    }
+
     return Scaffold(
-      appBar: AppBar(title: Text('Visits')),
-      body: FutureBuilder<List<Visit>>(
-        future: userVisitList,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No visits found.'));
-          }
-
-          final visits = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView.builder(
-              itemCount: visits.length,
-              itemBuilder: (context, index) {
-                final visit = visits[index];
+      appBar: AppBar(centerTitle: false,title: const Text('Visits')),
+      body: Row(
+        children: [
+          if (!isMobileDevice) SizedBox(width: screenWidth / 3.5, child: drawerUi(context)),
+          Expanded(
+            child: FutureBuilder<List<Visit>>(
+              future: userVisitList,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No visits found.'));
+                }
+                final visits = snapshot.data!;
                 return Padding(
-                  padding: const EdgeInsets.all(0),
-                  child: Card(
-                    child: ListTile(
-                      title: Text("${visit.storeName}".toUpperCase(), style: TextStyle(
-                        color: Colors.indigo,
-                        fontSize: 18
-                      ),),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Container(child: Text("${visit.ownerName} (${visit.contact})", style:
-                              TextStyle(
-                                fontSize: 18
-                              ),),),
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                    itemCount: visits.length,
+                    itemBuilder: (context, index) {
+                      final visit = visits[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(0),
+                        child: Card(
+                          child: ListTile(
+                            title: Text(
+                              visit.storeName.toUpperCase(),
+                              style: const TextStyle(color: Colors.indigo, fontSize: 18),
+                            ),
+                            subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  "${visit.ownerName} (${visit.contact})",
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
+                                child: Text(
+                                  "Note - ${visit.note}",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
+                                child: Text(
+                                  "Date - ${visit.followupDate}",
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                            ]),
                           ),
-
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
-                            child: Container(child: Text("Note - ${visit.note}", style:
-                              TextStyle(
-                                fontSize: 18,
-                              ),),),
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
-                            child: Container(child: Text("Date - ${visit.followupDate}", style:
-                            TextStyle(
-                                fontSize: 18,
-                            ),),),
-                          ),
-                    ]
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
