@@ -1,22 +1,22 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:salesboardapp/pages/add_farmer_screen.dart';
+import 'dart:convert';
+import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../api_service.dart';
 
 class AddDealerScreen extends StatefulWidget {
-
   final String areaId;
   final String routeId;
 
-  const AddDealerScreen({super.key, required this.areaId, required this.routeId});
+  const AddDealerScreen(
+      {super.key, required this.areaId, required this.routeId});
 
   @override
   State<AddDealerScreen> createState() => _AddDealerScreenState();
 }
 
 class _AddDealerScreenState extends State<AddDealerScreen> {
-
   final ApiService apiService = ApiService();
   final TextEditingController _companyController = TextEditingController();
   final TextEditingController _ownerController = TextEditingController();
@@ -29,7 +29,8 @@ class _AddDealerScreenState extends State<AddDealerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: false,
+      appBar: AppBar(
+        centerTitle: false,
         title: const Text("Add Dealer"),
       ),
       body: SingleChildScrollView(
@@ -46,58 +47,73 @@ class _AddDealerScreenState extends State<AddDealerScreen> {
                       decoration: const InputDecoration(
                           hintText: "Company", border: OutlineInputBorder()),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: _ownerController,
                       decoration: const InputDecoration(
                           hintText: "Owner", border: OutlineInputBorder()),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       keyboardType: TextInputType.number,
                       controller: _mobileController,
                       decoration: const InputDecoration(
                           hintText: "Contact", border: OutlineInputBorder()),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: _keeperController,
                       decoration: const InputDecoration(
                           hintText: "Keeper", border: OutlineInputBorder()),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       keyboardType: TextInputType.number,
                       controller: _keeperMobileController,
                       decoration: const InputDecoration(
-                          hintText: "Keeper Contact", border: OutlineInputBorder()),
+                          hintText: "Keeper Contact",
+                          border: OutlineInputBorder()),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: _gstController,
                       decoration: const InputDecoration(
                           hintText: "GST No.", border: OutlineInputBorder()),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: _panController,
                       decoration: const InputDecoration(
                           hintText: "PAN No.", border: OutlineInputBorder()),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     SizedBox(
                       width: double.infinity,
                       height: 48,
-                      child: ElevatedButton(onPressed: () {
-                        _addDealer();
-                      }, child: const Text("SUBMIT")),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            _addDealer();
+                          },
+                          child: const Text("SUBMIT")),
                     ),
-        
-        
                   ],
                 ),
               ),
@@ -114,8 +130,7 @@ class _AddDealerScreenState extends State<AddDealerScreen> {
               //     }, child: const Text("ADD FARMER")),
               //   ),
               // )
-            ]
-        ),
+            ]),
       ),
     );
   }
@@ -129,15 +144,19 @@ class _AddDealerScreenState extends State<AddDealerScreen> {
     String gst = _gstController.text;
     String pan = _panController.text;
 
-    apiService.addDealer(
-        "1",
-      company,
-      owner,
-      mobile,
-      keeper,
-      keeperMobile,
-      gst,
-      pan
-    );
+    apiService.addDealer("1", company, owner, mobile, keeper, keeperMobile, gst,
+        pan, widget.areaId, widget.routeId, _addCallBack);
+  }
+
+  void _addCallBack(String resp) {
+    try {
+      var loginJson = json.decode(resp);
+      Fluttertoast.showToast(msg: loginJson["message"]);
+      if (loginJson["success"]) {
+        if (mounted) Navigator.pop(context, true);
+      }
+    } catch (ex) {
+      log("Ex is: ----- $ex");
+    }
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:salesboardapp/api_service.dart';
-import 'package:salesboardapp/pages/add_dealer_screen.dart';
 
 import 'mark_attendance.dart';
 

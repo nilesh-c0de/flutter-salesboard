@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:ffi';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:salesboardapp/api_constants.dart';
 import 'package:salesboardapp/models/Attendance.dart';
@@ -18,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/Area.dart';
 import 'models/Common.dart';
+import 'models/CustomerResponse.dart';
 import 'models/ExpenseResponse.dart';
 import 'models/ExpenseType.dart';
 import 'models/MerchExpenseResponse.dart';
@@ -41,9 +43,11 @@ class ApiService {
       if (kDebugMode) {
         print(json.decode(response.body)['data']);
       }
-      return json.decode(response.body)['data']; // Adjust according to your response structure
+      return json.decode(
+          response.body)['data']; // Adjust according to your response structure
     } else {
-      throw Exception('Failed to log in: ${json.decode(response.body)['error']['message']}');
+      throw Exception(
+          'Failed to log in: ${json.decode(response.body)['error']['message']}');
     }
   }
 
@@ -112,7 +116,8 @@ class ApiService {
     }
   }
 
-  Future<Common?> uploadImage(String filePath, String reading, String lat, String lng, String address, bool isDayIn) async {
+  Future<Common?> uploadImage(String filePath, String reading, String lat,
+      String lng, String address, bool isDayIn) async {
     var request = http.MultipartRequest(
       'POST',
       Uri.parse(ApiConstants.markAttendanceEndPoint), // Your upload URL
@@ -142,11 +147,13 @@ class ApiService {
 
       if (jsonData['success'] == true) {
         print('Image uploaded successfully1!');
-        Common obj = Common(success: jsonData['success'], message: jsonData['message']);
+        Common obj =
+            Common(success: jsonData['success'], message: jsonData['message']);
         return obj;
       } else {
         print('Failed to upload image. - ${jsonData['message']}');
-        Common obj = Common(success: jsonData['success'], message: jsonData['message']);
+        Common obj =
+            Common(success: jsonData['success'], message: jsonData['message']);
         return obj;
       }
     }
@@ -158,7 +165,17 @@ class ApiService {
     // }
   }
 
-  Future<bool> addFarmer(String areaId, String routeId, String type, String farmer, String contact, String village, String otherInfo, String note, String lat, String lng) async {
+  Future<bool> addFarmer(
+      String areaId,
+      String routeId,
+      String type,
+      String farmer,
+      String contact,
+      String village,
+      String otherInfo,
+      String note,
+      String lat,
+      String lng) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
@@ -196,13 +213,22 @@ class ApiService {
     }
   }
 
-  Future<void> addDealer(String isDealer, String company, String owner, String mobile, String keeper, String keeperMobile, String gst, String pan) async {
+  Future<void> addDealer(
+      String isDealer,
+      String company,
+      String owner,
+      String mobile,
+      String keeper,
+      String keeperMobile,
+      String gst,
+      String pan,
+      String area,
+      String route,
+      void Function(String resp) addCallBack) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
-    var area = "-1";
-    var route = "-1";
-    var state = "-1";
+    var state = "2";
 
     final body = {
       'isDealer': isDealer,
@@ -227,18 +253,29 @@ class ApiService {
 
     if (response.statusCode == 200) {
       print(response.body);
+      addCallBack(response.body);
     } else {
       print('Failed to upload image. Status code: ${response.statusCode}');
+      Fluttertoast.showToast(
+          msg: 'Failed to upload image. Status code: ${response.statusCode}');
     }
   }
 
-  Future<bool> addVisit(String note, String date, String custId, String lat, String lng) async {
+  Future<bool> addVisit(
+      String note, String date, String custId, String lat, String lng) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
     // final custId = "0";
 
-    final body = {'cust_id': custId, 'comment': note, 'next_visit': date, 'user_id': userId, "lat": lat, "lng": lng};
+    final body = {
+      'cust_id': custId,
+      'comment': note,
+      'next_visit': date,
+      'user_id': userId,
+      "lat": lat,
+      "lng": lng
+    };
 
     final response = await http.post(Uri.parse(ApiConstants.addVisitEndPoint),
         headers: <String, String>{
@@ -291,7 +328,8 @@ class ApiService {
     final userId = prefs.getString('userId');
 
     // Replace with your API endpoint
-    final response = await http.get(Uri.parse('http://salesboard.in/solufinephp/new/get_user_area.php?userId=$userId'));
+    final response = await http.get(Uri.parse(
+        'http://salesboard.in/solufinephp/new/get_user_area.php?userId=$userId'));
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -309,7 +347,8 @@ class ApiService {
 
   Future<List<MyRoute>> fetchRoutes(String area) async {
     // Replace with your API endpoint
-    final response = await http.get(Uri.parse('http://salesboard.in/solufinephp/new/get_area_route.php?areaId=$area'));
+    final response = await http.get(Uri.parse(
+        'http://salesboard.in/solufinephp/new/get_area_route.php?areaId=$area'));
 
     if (kDebugMode) {
       print(area);
@@ -329,7 +368,7 @@ class ApiService {
     }
   }
 
-  Future<List<Customer>> fetchCustomers(String? routeId) async {
+  Future<CustomerResponse?> fetchCustomers(String? routeId) async {
     final body1 = {'route': routeId};
 
     final response = await http.post(Uri.parse(ApiConstants.storeEndPoint),
@@ -339,16 +378,14 @@ class ApiService {
         body: body1);
 
     if (response.statusCode == 200) {
-      print(response.body);
-      final jsonResponse = json.decode(response.body);
-      final List<dynamic> jsonData = jsonResponse['result'];
-      return jsonData.map((visit) => Customer.fromJson(visit)).toList();
+      return CustomerResponse.fromJson(json.decode(response.body));
     } else {
-      throw Exception('Failed to load routes');
+      return null;
     }
   }
 
-  Future<void> addTourPlan(String areaId, String routeId, String date, String calls) async {
+  Future<void> addTourPlan(
+      String areaId, String routeId, String date, String calls) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
@@ -360,11 +397,12 @@ class ApiService {
       'user_id': userId,
     };
 
-    final response = await http.post(Uri.parse(ApiConstants.addTourPlanEndPoint),
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body);
+    final response =
+        await http.post(Uri.parse(ApiConstants.addTourPlanEndPoint),
+            headers: <String, String>{
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body);
 
     if (response.statusCode == 200) {
       print(response.body);
@@ -386,11 +424,12 @@ class ApiService {
       'event': event,
     };
 
-    final response = await http.post(Uri.parse(ApiConstants.viewTourPlanEndPoint),
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body);
+    final response =
+        await http.post(Uri.parse(ApiConstants.viewTourPlanEndPoint),
+            headers: <String, String>{
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body);
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -416,11 +455,12 @@ class ApiService {
       'month': mId,
     };
 
-    final response = await http.post(Uri.parse(ApiConstants.tourPlanInDetailsEndPoint),
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body);
+    final response =
+        await http.post(Uri.parse(ApiConstants.tourPlanInDetailsEndPoint),
+            headers: <String, String>{
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body);
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -440,11 +480,12 @@ class ApiService {
       'user_id': userId,
     };
 
-    final response = await http.post(Uri.parse(ApiConstants.expenseTypesEndPoint),
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body);
+    final response =
+        await http.post(Uri.parse(ApiConstants.expenseTypesEndPoint),
+            headers: <String, String>{
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body);
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -456,7 +497,8 @@ class ApiService {
     }
   }
 
-  Future<void> addExpense(String imagePath, String date, String amount, String note, String typeId) async {
+  Future<void> addExpense(String imagePath, String date, String amount,
+      String note, String typeId) async {
     var request = http.MultipartRequest(
       'POST',
       Uri.parse(ApiConstants.addExpenseEndPoint), // Your upload URL
@@ -491,11 +533,12 @@ class ApiService {
       'user_id': userId,
     };
 
-    final response = await http.post(Uri.parse(ApiConstants.showExpensesEndPoint),
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body);
+    final response =
+        await http.post(Uri.parse(ApiConstants.showExpensesEndPoint),
+            headers: <String, String>{
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body);
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -517,16 +560,19 @@ class ApiService {
       'event': event,
     };
 
-    final response = await http.post(Uri.parse(ApiConstants.merchExpensesEndPoint),
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body);
+    final response =
+        await http.post(Uri.parse(ApiConstants.merchExpensesEndPoint),
+            headers: <String, String>{
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body);
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
       final List<dynamic> jsonData = jsonResponse['result'];
-      return jsonData.map((visit) => MerchExpenseResponse.fromJson(visit)).toList();
+      return jsonData
+          .map((visit) => MerchExpenseResponse.fromJson(visit))
+          .toList();
     } else {
       print('Failed to upload image. Status code: ${response.statusCode}');
       return [];
@@ -588,7 +634,8 @@ class ApiService {
   }
 
   Future<ProductResponse?> fetchProducts() async {
-    final response = await http.get(Uri.parse('http://salesboard.in/solufinephp/new/fetch_products.php'));
+    final response = await http.get(
+        Uri.parse('http://salesboard.in/solufinephp/new/fetch_products.php'));
 
     if (response.statusCode == 200) {
       return ProductResponse.fromJson(json.decode(response.body));
@@ -598,7 +645,8 @@ class ApiService {
     }
   }
 
-  Future<CartResponse?> addToCart(String quantity, String pId, String custId, String cat, String dId, String isDist) async {
+  Future<CartResponse?> addToCart(String quantity, String pId, String custId,
+      String cat, String dId, String isDist) async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('userId');
 
@@ -664,7 +712,8 @@ class ApiService {
     }
   }
 
-  Future<Common?> addUser(String name, String contact, String uname, String pass) async {
+  Future<Common?> addUser(
+      String name, String contact, String uname, String pass) async {
     final body = {
       'name': name,
       'contact': contact,
@@ -716,11 +765,12 @@ class ApiService {
       'user_type': userType,
     };
 
-    final response = await http.post(Uri.parse(ApiConstants.dashboardUserEndPoint),
-        headers: <String, String>{
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: body);
+    final response =
+        await http.post(Uri.parse(ApiConstants.dashboardUserEndPoint),
+            headers: <String, String>{
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body);
 
     log("url ${ApiConstants.dashboardUserEndPoint}");
     log("data $body");

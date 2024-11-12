@@ -90,29 +90,31 @@ class _ViewProbScreenState extends State<ViewProbScreen> {
                                 "${item.shop}".toUpperCase(),
                                 style: const TextStyle(fontSize: 18, color: Colors.indigo),
                               ),
-                              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    "${item.owner} (${item.mobile})",
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    "${item.date}",
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    "${item.type}",
-                                    style: const TextStyle(fontSize: 18),
-                                  ),
-                                ),
-                              ]),
+                              subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: Text(
+                                        "${item.owner} (${item.mobile})",
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: Text(
+                                        "${item.date}",
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: Text(
+                                        "${item.type}",
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                  ]),
                               onTap: () {
                                 Fluttertoast.showToast(msg: "${item.address}");
                               },
@@ -133,7 +135,9 @@ class _ViewProbScreenState extends State<ViewProbScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AddProbScreen())).then((value) => value != null ? getProb() : false),
+        onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AddProbScreen()))
+            .then((value) => value != null ? getProb() : false),
         child: const Icon(Icons.add),
       ),
     );
@@ -180,7 +184,16 @@ class ProbData {
   String? type;
   String? date;
 
-  ProbData({this.probId, this.shop, this.owner, this.mobile, this.email, this.address, this.user, this.type, this.date});
+  ProbData(
+      {this.probId,
+      this.shop,
+      this.owner,
+      this.mobile,
+      this.email,
+      this.address,
+      this.user,
+      this.type,
+      this.date});
 
   ProbData.fromJson(Map<String, dynamic> json) {
     probId = json['prob_id'];
